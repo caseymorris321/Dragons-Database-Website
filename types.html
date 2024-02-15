@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Dragon Types</title>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+            * four DIVS: browse, insert, update, delete
+            * this function sets one visible the others not
+            */
+            if (dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else if (dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+        function newType() { showform('insert'); }
+        function updateType(pid) { showform('update'); }
+        function deleteType(pid) { showform('delete'); }
+        function browseTypes() { showform('browse'); }
+        function showAll() { showform('all'); }
+    </script>
+
+    </head>
+
+    <body onload="browseTypes()">
+
+        <h1>Dragon Types</h1>
+
+        <nav class="navbar">
+            <ul>
+                <li><a href="dragons.html">Dragons</a></li>
+                <li><a href="types.html">Types</a></li>
+                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="environments.html">Environments</a></li>
+            </ul>
+        </nav>
+
+        <!-- browse -->
+        <div id="browse" style="display: block"></div>
+        <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+        <p><strong>Browse Dragon Types</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th><a href="#" onClick="newType()">New</a></th>
+                    <td></td>
+                    <th>Type ID</th>
+                    <th>Name</th>
+                    <th>Average Height (ft)</th>
+                    <th>Average Weight (lbs)</th>
+                    <th>Average Age (yrs)</th>
+                    <th>Total Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateType('this.typeID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteType('this.typeID')">Delete</a></td>
+                    <td>1</td>
+                    <td>Fire Dragon</td>
+                    <td>20</td>
+                    <td>1100</td>
+                    <td>200</td>
+                    <td>10</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateType('this.typeID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteType('this.typeID')">Delete</a></td>
+                    <td>2</td>
+                    <td>Ice Dragon</td>
+                    <td>25</td>
+                    <td>1200</td>
+                    <td>250</td>
+                    <td>8</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateType('this.typeID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteType('this.typeID')">Delete</a></td>
+                    <td>3</td>
+                    <td>Earth Dragon</td>
+                    <td>30</td>
+                    <td>1500</td>
+                    <td>300</td>
+                    <td>12</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- add new dragon type -->
+        <p>&nbsp;</p>
+        <div id="insert" style="display: none;">
+            <form method="POST" id="addType">
+                <legend><strong>Add New Type</strong></legend>
+                <fieldset class="fields">
+                    <label>Name:</label> <input type="text"
+                        name="type_name"><br>
+                    <label>Average Height (ft):</label> <input type="number"
+                        name="type_average_height"><br>
+                    <label>Average Weight (lbs):</label> <input type="number"
+                        name="type_average_weight"><br>
+                    <label>Average Age (yrs):</label> <input type="number"
+                        name="type_average_age"><br>
+                </fieldset>
+                <input class="btn" type="submit" value="Add Type">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseTypes()">
+            </form>
+        </div>
+
+        <!-- update type -->
+        <div id="update" style="display: none;">
+            <form method="POST" id="updateType">
+                <legend><strong>Update Type</strong></legend>
+                <fieldset class="fields">
+                    <label>ID:</label> <input type="text" name="type_id"
+                        value="1" readonly><br>
+                    <label>Name:</label> <input type="text" name="type_name"
+                        value="Fire Dragon"><br>
+                    <label>Average Height (ft):</label> <input type="number"
+                        name="type_average_height" value="20"><br>
+                    <label>Average Weight (lbs):</label> <input type="number"
+                        name="type_average_weight" value="1200"><br>
+                    <label>Average Age (years):</label> <input type="number"
+                        name="type_average_age" value="200"><br>
+                </fieldset>
+                <input class="btn" type="submit" value="Save Type">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseTypes()">
+            </form>
+        </div>
+
+        <!-- delete type -->
+        <div id="delete" style="display: none;">
+            <form method="POST" id="deleteType">
+                <legend><strong>Delete Type</strong></legend>
+                <fieldset class="fields">
+                    <p>Are you sure you wish to delete the following type?</p>
+                    <input type="hidden" name="personID" id="deletepersonID"
+                        value="1">
+                    <label>ID:</label> 1 <br>
+                    <label>Name:</label> Fire Dragon
+                </fieldset>
+                <input class="btn" type="submit" value="Delete Type">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseTypes()">
+            </form>
+        </div>
+
+    </body>
+
+</html>

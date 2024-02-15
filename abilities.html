@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Dragon Abilities</title>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+            * four DIVS: browse, insert, update, delete
+            * this function sets one visible the others not
+            */
+            if (dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else if (dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+        function newAbility() { showform('insert'); }
+        function updateAbility(pid) { showform('update'); }
+        function deleteAbility(pid) { showform('delete'); }
+        function browseAbilities() { showform('browse'); }
+        function showAll() { showform('all'); }
+    </script>
+
+    </head>
+
+    <body onload="browseAbilities()">
+
+        <h1>Dragon Abilities</h1>
+
+        <nav class="navbar">
+            <ul>
+                <li><a href="dragons.html">Dragons</a></li>
+                <li><a href="types.html">Types</a></li>
+                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="environments.html">Environments</a></li>
+            </ul>
+        </nav>
+
+        <!-- browse -->
+        <div id="browse" style="display: block"></div>
+        <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+        <p><strong>Browse Dragon Abilities</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th><a href="#" onClick="newAbility()">New</a></th>
+                    <td></td>
+                    <th>Ability ID</th>
+                    <th>Name</th>
+                    <th>Proficiency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateAbility('this.abilityID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteAbility('this.abilityID')">Delete</a></td>
+                    <td>1</td>
+                    <td>Blue Flame</td>
+                    <td>Challenger</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateAbility('this.abilityID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteAbility('this.abilityID')">Delete</a></td>
+                    <td>2</td>
+                    <td>Ice Manipulation</td>
+                    <td>Expert</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateAbility('this.abilityID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteAbility('this.abilityID')">Delete</a></td>
+                    <td>3</td>
+                    <td>Invisibility</td>
+                    <td>Intermediate</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- add new dragon ability -->
+        <p>&nbsp;</p>
+        <div id="insert" style="display: none;">
+            <form method="POST" id="addAbility">
+                <legend><strong>Add New Ability</strong></legend>
+                <fieldset class="fields">
+                    <label>Name:</label> <input type="text"
+                        name="ability_name"><br>
+                    <label>Proficiency:</label> <input type="text"
+                        name="ability_proficiency"><br>
+                </fieldset>
+                <input type="submit" value="Add Ability">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseAbilities()">
+            </form>
+        </div>
+
+        <!-- update ability -->
+        <div id="update" style="display: none;">
+            <form method="POST" id="updateAbility">
+                <legend><strong>Update Ability</strong></legend>
+                <fieldset class="fields">
+                    <label>Ability ID:</label> <input type="text"
+                        name="ability_id" value="1" readonly><br>
+                    <label>Name:</label> <input type="text" name="ability_name"
+                        value="Blue Flame"><br>
+                    <label>Proficiency:</label> <input type="text"
+                        name="ability_proficiency" value="Challenger"><br>
+                </fieldset>
+                <input class="btn" type="submit" value="Save Ability">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseAbilities()">
+            </form>
+        </div>
+
+        <!-- delete ability -->
+        <div id="delete" style="display: none;">
+            <form method="POST" id="deleteAbility">
+                <legend><strong>Delete Ability</strong></legend>
+                <fieldset class="fields">
+                    <p>Are you sure you wish to delete the following
+                        ability?</p>
+                    <input type="hidden" name="personID" id="deletepersonID"
+                        value="1">
+                    <label>ID:</label> 1 <br>
+                    <label>Name:</label> Blue Flame
+                </fieldset>
+                <input class="btn" type="submit" value="Delete Ability">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseAbilities()">
+            </form>
+        </body>
+
+    </html>

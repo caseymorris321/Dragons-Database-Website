@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dragons</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<script language="JavaScript">
+    function showform(dowhat) {
+        /*
+        * four DIVS: browse, insert, update, delete
+        * this function sets one visible the others not
+        */
+        if (dowhat == 'insert') {
+            document.getElementById('browse').style.display = 'none';
+            document.getElementById('insert').style.display = 'block';
+            document.getElementById('update').style.display = 'none';
+            document.getElementById('delete').style.display = 'none';
+        }
+        else if (dowhat == 'update') {
+            document.getElementById('browse').style.display = 'none';
+            document.getElementById('insert').style.display = 'none';
+            document.getElementById('update').style.display = 'block';
+            document.getElementById('delete').style.display = 'none';
+        }
+        else if (dowhat == 'delete') {
+            document.getElementById('browse').style.display = 'none';
+            document.getElementById('insert').style.display = 'none';
+            document.getElementById('update').style.display = 'none';
+            document.getElementById('delete').style.display = 'block';
+        }
+        else if (dowhat == 'all') {
+            document.getElementById('browse').style.display = 'block';
+            document.getElementById('insert').style.display = 'block';
+            document.getElementById('update').style.display = 'block';
+            document.getElementById('delete').style.display = 'block';
+        }
+        else { //by default display browse
+            document.getElementById('browse').style.display = 'block';
+            document.getElementById('insert').style.display = 'none';
+            document.getElementById('update').style.display = 'none';
+            document.getElementById('delete').style.display = 'none';
+        }
+    }
+    function newDragon() { showform('insert'); }
+    function updateDragon(pid) { showform('update'); }
+    function deleteDragon(pid) { showform('delete'); }
+    function browseDragons() { showform('browse'); }
+    function showAll() { showform('all'); }
+</script>
+
+</head>
+
+<body onload="browseDragons()">
+
+    <h1>Dragons</h1>
+
+    <nav class="navbar">
+        <ul>
+            <li><a href="dragons.html">Dragons</a></li>
+            <li><a href="types.html">Types</a></li>
+            <li><a href="abilities.html">Abilities</a></li>
+            <li><a href="environments.html">Environments</a></li>
+        </ul>
+    </nav>
+
+    <!-- browse -->
+    <div id="browse" style="display: block"></div>
+    <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+    <p><strong>Browse Dragons</strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th><a href="#" onClick="newDragon()">New</a></th>
+                <th></th>
+                <th>Dragon ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Height (ft)</th>
+                <th>Weight (lbs)</th>
+                <th>Age (yrs)</th>
+                <th>Personality</th>
+                <th>Alignment</th>
+                <th>Environment</th>
+                <th>Number of People Killed</th>
+                <th>Lore</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr align="center">
+                <td><a href="#" onClick="updateDragon('this.dragonID')">Edit</a></td>
+                <td><a href="#" onClick="deleteDragon('this.dragonID')">Delete</a></td>
+                <td>1</td>
+                <td>Blaze</td>
+                <td>Fire Dragon</td>
+                <td>22.5</td>
+                <td>1050</td>
+                <td>220</td>
+                <td>Aggressive</td>
+                <td>Chaotic Evil</td>
+                <td>Volcanic Caverns</td>
+                <td>100</td>
+                <td>Cooks its prey to death</td>
+            </tr>
+            <tr align="center">
+                <td><a href="#" onClick="updateDragon('this.dragonID')">Edit</a></td>
+                <td><a href="#" onClick="deleteDragon('this.dragonID')">Delete</a></td>
+                <td>2</td>
+                <td>Frostbite</td>
+                <td>Ice Dragon</td>
+                <td>91.21</td>
+                <td>2755.77</td>
+                <td>240</td>
+                <td>Calm</td>
+                <td>Neutral</td>
+                <td>Frozen Tundra</td>
+                <td>50</td>
+                <td>Freezes its prey to death</td>
+            </tr>
+            <tr align="center">
+                <td><a href="#" onClick="updateDragon('this.dragonID')">Edit</a></td>
+                <td><a href="#" onClick="deleteDragon('this.dragonID')">Delete</a></td>
+                <td>3</td>
+                <td>Tremor</td>
+                <td>Earth Dragon</td>
+                <td>105.31</td>
+                <td>3417.16</td>
+                <td>270</td>
+                <td>Steady</td>
+                <td>Lawful Good</td>
+                <td>Mountain Range</td>
+                <td>75</td>
+                <td>Creates earthquakes with each step</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <p>&nbsp;</p>
+
+    <!--add new dragon-->
+    <div id="insert" style="display: none">
+        <form method="POST" id="addDragon">
+            <legend><strong>Add Dragon</strong></legend>
+            <fieldset class="fields">
+                <label>Name:</label> <input type="text" name="dragon_name"><br>
+                <label>Type Name:</label> <input type="number" name="type_name"><br>
+                <label>Height (ft):</label> <input type="text" name="dragon_height"><br>
+                <label>Weight (lbs):</label> <input type="text" name="dragon_weight"><br>
+                <label>Age:</label> <input type="number" name="dragon_age"><br>
+                <label>Personality:</label> <input type="text" name="dragon_personality"><br>
+                <label>Alignment:</label> <input type="text" name="dragon_alignment"><br>
+                <label>Environment:</label> <input type="text" name="environment_name"><br>
+                <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed">
+                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea><br>
+            </fieldset>
+            <input class="btn" type="submit" value="Add Dragon">
+            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
+        </form>
+    </div>
+
+
+    <!-- update dragon -->
+    <div method="POST" id="update" style="display: none">
+        <form id="updateDragon">
+            <legend><strong>Update Dragon</strong></legend>
+            <fieldset class="fields">
+                <label>ID:</label> <input type="text" name="dragon_id" value="1" readonly><br>
+                <label>Name:</label> <input type="text" name="dragon_name" value="Blaze"><br>
+                <label>Type:</label> <select name="type_id"><br>
+                    <option value="1" selected>Fire Dragon</option>
+                    <option value="2">Ice Dragon</option>
+                    <option value="3">Earth Dragon</option>
+                </select><br>
+                <label>Height (ft):</label> <input type="text" name="dragon_height" value="22.5"><br>
+                <label>Weight (lbs):</label> <input type="text" name="dragon_weight" value="1050"><br>
+                <label>Age:</label> <input type="number" name="dragon_age" value="220"><br>
+                <label>Personality:</label> <input type="text" name="dragon_personality" value="Aggressive"><br>
+                <label>Alignment:</label> <input type="text" name="dragon_alignment" value="Chaotic Evil"><br>
+                <label>Environment:</label> <select name="environment_name"><br>
+                    <option value="1" selected>Volcanic Caverns</option>
+                    <option value="2">Frozen Tundra</option>
+                    <option value="3">Mountain Range</option>
+                </select><br>
+                <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed"
+                    value="100"><br>
+                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea><br>
+            </fieldset>
+            <input class="btn" type="submit" value="Save Dragon">
+            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
+        </form>
+    </div>
+
+    <!-- delete dragon -->
+    <div id="delete" style="display: none">
+        <form method="POST" id="deleteDragon">
+            <legend><strong>Delete Dragon</strong></legend>
+            <fieldset class="fields">
+                <p>Are you sure you wish to delete the following dragon?</p>
+                <input type="hidden" name="personID" id="deletepersonID" value="1">
+                <label>ID:</label> 1 <br>
+                <label>Name:</label> Blaze
+            </fieldset>
+            <input class="btn" type="submit" value="Delete Dragon">
+            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
+        </form>
+    </div>
+</body>
+
+</html>

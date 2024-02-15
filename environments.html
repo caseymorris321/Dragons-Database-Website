@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Dragon Environments</title>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+            * four DIVS: browse, insert, update, delete
+            * this function sets one visible the others not
+            */
+            if (dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            }
+            else if (dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else if (dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('update').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            }
+            else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('update').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+        function newEnvironment() { showform('insert'); }
+        function updateEnvironment(pid) { showform('update'); }
+        function deleteEnvironment(pid) { showform('delete'); }
+        function browseEnvironments() { showform('browse'); }
+        function showAll() { showform('all'); }
+    </script>
+
+    </head>
+
+    <body onload="browseEnvironments()">
+
+        <h1>Dragon Environments</h1>
+
+        <nav class="navbar">
+            <ul>
+                <li><a href="dragons.html">Dragons</a></li>
+                <li><a href="types.html">Types</a></li>
+                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="environments.html">Environments</a></li>
+            </ul>
+        </nav>
+
+        <!-- browse -->
+        <div id="browse"></div>
+        <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+        <p><strong>Browse Dragon Environments</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th><a href="#" onClick="newEnvironment()">New</a></th>
+                    <td></td>
+                    <th>Environment ID</th>
+                    <th>Name</th>
+                    <th>Terrain</th>
+                    <th>Climate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                    <td>1</td>
+                    <td>Volcanic Caverns</td>
+                    <td>Rocky</td>
+                    <td>Hot</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                    <td>2</td>
+                    <td>Frozen Tundra</td>
+                    <td>Snowy</td>
+                    <td>Cold</td>
+                </tr>
+                <tr align="center">
+                    <td><a href="#"
+                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                    <td><a href="#"
+                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                    <td>3</td>
+                    <td>Mountain Range</td>
+                    <td>Varied</td>
+                    <td>Moderate</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- add new environment -->
+        <p>&nbsp;</p>
+        <div id="insert" style="display: none;">
+            <form method="POST" id="addEnvironment">
+                <legend><strong>Add New Environment</strong></legend>
+                <fieldset>
+                    <label>Name:</label> <input type="text"
+                        name="environment_name"><br>
+                    <label>Terrain:</label> <input type="text"
+                        name="environment_terrain"><br>
+                    <label>Climate:</label> <input type="text"
+                        name="environment_climate"><br>
+                </fieldset>
+                <input class="btn" type="submit" value="Add Environment">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseEnvironments()">
+            </form>
+        </div>
+
+        <!-- update environment -->
+
+        <div id="update" style="display: none;">
+            <form method="POST" id="updateEnvironment">
+                <legend><strong>Update Environment</strong></legend>
+                <fieldset>
+                    <label>Environment ID:</label> <input type="text"
+                        name="environment_id" value="1" readonly><br>
+                    <label>Name:</label> <input type="text"
+                        name="environment_name" value="Volcanic Caverns"><br>
+                    <label>Terrain:</label> <input type="text"
+                        name="environment_terrain" value="Rocky"><br>
+                    <label>Climate:</label> <input type="text"
+                        name="environment_climate" value="Hot"><br>
+                </fieldset>
+                <input class="btn" type="submit" value="Save Type">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseEnvironments()">
+            </form>
+        </div>
+
+        <!-- delete environment -->
+
+        <div id="delete" style="display: none;">
+            <form method="POST" id="deleteEnvironment">
+                <legend><strong>Delete Environment</strong></legend>
+                <fieldset>
+                    <p>Are you sure you wish to delete the following
+                        environment?</p>
+                    <input type="hidden" name="personID" id="deletepersonID"
+                        value="1">
+                    <label>ID:</label> 1 <br>
+                    <label>Name:</label> Volcanic Caverns
+                </fieldset>
+                <input class="btn" type="submit" value="Delete Type">
+                <input class="btn" type="button" value="Cancel"
+                    onClick="browseEnvironments()">
+            </form>
+        </div>
+    </body>
+
+</html>
