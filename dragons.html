@@ -65,7 +65,7 @@
     </nav>
 
     <!-- browse -->
-    <div id="browse" style="display: block"></div>
+    <div id="browse" style="display: block">
     <p><a href="#" onClick="showAll()">Display all forms</a> </p>
     <p><strong>Browse Dragons</strong></p>
     <table>
@@ -82,6 +82,7 @@
                 <th>Personality</th>
                 <th>Alignment</th>
                 <th>Environment</th>
+                <th>Abilities</th>
                 <th>Number of People Killed</th>
                 <th>Lore</th>
             </tr>
@@ -99,6 +100,7 @@
                 <td>Aggressive</td>
                 <td>Chaotic Evil</td>
                 <td>Volcanic Caverns</td>
+                <td>Blue Flame</td>
                 <td>100</td>
                 <td>Cooks its prey to death</td>
             </tr>
@@ -114,6 +116,7 @@
                 <td>Calm</td>
                 <td>Neutral</td>
                 <td>Frozen Tundra</td>
+                <td>Ice Manipulation</td>
                 <td>50</td>
                 <td>Freezes its prey to death</td>
             </tr>
@@ -129,6 +132,7 @@
                 <td>Steady</td>
                 <td>Lawful Good</td>
                 <td>Mountain Range</td>
+                <td>Invisibility</td>
                 <td>75</td>
                 <td>Creates earthquakes with each step</td>
             </tr>
@@ -150,18 +154,24 @@
                 <label>Personality:</label> <input type="text" name="dragon_personality"><br>
                 <label>Alignment:</label> <input type="text" name="dragon_alignment"><br>
                 <label>Environment:</label> <input type="text" name="environment_name"><br>
-                <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed">
-                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea><br>
+                <label>Abilities:</label><small> Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small><br>
+                <select name="dragons_abilities[]" multiple><br>
+                    <option value="1" selected>Blue Flame</option>
+                    <option value="2">Ice Manipulation</option>
+                    <option value="3">	Invisibility</option>
+                </select>
+                <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed"><br>
+                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea>
             </fieldset>
+            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
             <input class="btn" type="submit" value="Add Dragon">
-            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
         </form>
     </div>
 
 
     <!-- update dragon -->
-    <div method="POST" id="update" style="display: none">
-        <form id="updateDragon">
+    <div id="update" style="display: none">
+        <form method="POST" id="updateDragon">
             <legend><strong>Update Dragon</strong></legend>
             <fieldset class="fields">
                 <label>ID:</label> <input type="text" name="dragon_id" value="1" readonly><br>
@@ -181,14 +191,22 @@
                     <option value="2">Frozen Tundra</option>
                     <option value="3">Mountain Range</option>
                 </select><br>
+                <label>Abilities:</label><small> Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small><br>
+                <select name="dragons_abilities[]" multiple><br>
+                    <option value="1" selected>Blue Flame</option>
+                    <option value="2">Ice Manipulation</option>
+                    <option value="3">	Invisibility</option>
+                </select>
                 <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed"
                     value="100"><br>
-                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea><br>
+                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20">Cooks its prey to death</textarea><br>
             </fieldset>
+            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
             <input class="btn" type="submit" value="Save Dragon">
-            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
         </form>
     </div>
+
+
 
     <!-- delete dragon -->
     <div id="delete" style="display: none">
@@ -196,12 +214,12 @@
             <legend><strong>Delete Dragon</strong></legend>
             <fieldset class="fields">
                 <p>Are you sure you wish to delete the following dragon?</p>
-                <input type="hidden" name="personID" id="deletepersonID" value="1">
+                <input type="hidden" name="dragonID" id="deletedragonID" value="1">
                 <label>ID:</label> 1 <br>
                 <label>Name:</label> Blaze
             </fieldset>
+            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
             <input class="btn" type="submit" value="Delete Dragon">
-            <input class="btn" type="button" value="Cancel" onClick="browseDragons()">
         </form>
     </div>
 </body>

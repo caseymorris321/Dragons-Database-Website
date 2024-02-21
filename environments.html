@@ -64,56 +64,57 @@
         </nav>
 
         <!-- browse -->
-        <div id="browse"></div>
-        <p><a href="#" onClick="showAll()">Display all forms</a> </p>
-        <p><strong>Browse Dragon Environments</strong></p>
-        <table>
-            <thead>
-                <tr>
-                    <th><a href="#" onClick="newEnvironment()">New</a></th>
-                    <td></td>
-                    <th>Environment ID</th>
-                    <th>Name</th>
-                    <th>Terrain</th>
-                    <th>Climate</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                    <td>1</td>
-                    <td>Volcanic Caverns</td>
-                    <td>Rocky</td>
-                    <td>Hot</td>
-                </tr>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                    <td>2</td>
-                    <td>Frozen Tundra</td>
-                    <td>Snowy</td>
-                    <td>Cold</td>
-                </tr>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                    <td>3</td>
-                    <td>Mountain Range</td>
-                    <td>Varied</td>
-                    <td>Moderate</td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="browse" style="display: block">
+            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            <p><strong>Browse Dragon Environments</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th><a href="#" onClick="newEnvironment()">New</a></th>
+                        <td></td>
+                        <th>Environment ID</th>
+                        <th>Name</th>
+                        <th>Terrain</th>
+                        <th>Climate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                        <td>1</td>
+                        <td>Volcanic Caverns</td>
+                        <td>Rocky</td>
+                        <td>Hot</td>
+                    </tr>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                        <td>2</td>
+                        <td>Frozen Tundra</td>
+                        <td>Snowy</td>
+                        <td>Cold</td>
+                    </tr>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
+                        <td>3</td>
+                        <td>Mountain Range</td>
+                        <td>Varied</td>
+                        <td>Moderate</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>&nbsp;</p>
 
         <!-- add new environment -->
-        <p>&nbsp;</p>
         <div id="insert" style="display: none;">
             <form method="POST" id="addEnvironment">
                 <legend><strong>Add New Environment</strong></legend>
@@ -125,9 +126,9 @@
                     <label>Climate:</label> <input type="text"
                         name="environment_climate"><br>
                 </fieldset>
-                <input class="btn" type="submit" value="Add Environment">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
+                <input class="btn" type="submit" value="Add Environment">
             </form>
         </div>
 
@@ -146,9 +147,9 @@
                     <label>Climate:</label> <input type="text"
                         name="environment_climate" value="Hot"><br>
                 </fieldset>
-                <input class="btn" type="submit" value="Save Type">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
+                <input class="btn" type="submit" value="Save Environment">
             </form>
         </div>
 
@@ -165,9 +166,9 @@
                     <label>ID:</label> 1 <br>
                     <label>Name:</label> Volcanic Caverns
                 </fieldset>
-                <input class="btn" type="submit" value="Delete Type">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
+                <input class="btn" type="submit" value="Delete Environment">
             </form>
         </div>
     </body>

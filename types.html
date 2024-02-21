@@ -64,65 +64,66 @@
         </nav>
 
         <!-- browse -->
-        <div id="browse" style="display: block"></div>
-        <p><a href="#" onClick="showAll()">Display all forms</a> </p>
-        <p><strong>Browse Dragon Types</strong></p>
-        <table>
-            <thead>
-                <tr>
-                    <th><a href="#" onClick="newType()">New</a></th>
-                    <td></td>
-                    <th>Type ID</th>
-                    <th>Name</th>
-                    <th>Average Height (ft)</th>
-                    <th>Average Weight (lbs)</th>
-                    <th>Average Age (yrs)</th>
-                    <th>Total Number</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateType('this.typeID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteType('this.typeID')">Delete</a></td>
-                    <td>1</td>
-                    <td>Fire Dragon</td>
-                    <td>20</td>
-                    <td>1100</td>
-                    <td>200</td>
-                    <td>10</td>
-                </tr>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateType('this.typeID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteType('this.typeID')">Delete</a></td>
-                    <td>2</td>
-                    <td>Ice Dragon</td>
-                    <td>25</td>
-                    <td>1200</td>
-                    <td>250</td>
-                    <td>8</td>
-                </tr>
-                <tr align="center">
-                    <td><a href="#"
-                            onClick="updateType('this.typeID')">Edit</a></td>
-                    <td><a href="#"
-                            onClick="deleteType('this.typeID')">Delete</a></td>
-                    <td>3</td>
-                    <td>Earth Dragon</td>
-                    <td>30</td>
-                    <td>1500</td>
-                    <td>300</td>
-                    <td>12</td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="browse" style="display: block">
+            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            <p><strong>Browse Dragon Types</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th><a href="#" onClick="newType()">New</a></th>
+                        <td></td>
+                        <th>Type ID</th>
+                        <th>Name</th>
+                        <th>Average Height (ft)</th>
+                        <th>Average Weight (lbs)</th>
+                        <th>Average Age (yrs)</th>
+                        <th>Total Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateType('this.typeID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteType('this.typeID')">Delete</a></td>
+                        <td>1</td>
+                        <td>Fire Dragon</td>
+                        <td>20</td>
+                        <td>1100</td>
+                        <td>200</td>
+                        <td>10</td>
+                    </tr>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateType('this.typeID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteType('this.typeID')">Delete</a></td>
+                        <td>2</td>
+                        <td>Ice Dragon</td>
+                        <td>25</td>
+                        <td>1200</td>
+                        <td>250</td>
+                        <td>8</td>
+                    </tr>
+                    <tr align="center">
+                        <td><a href="#"
+                                onClick="updateType('this.typeID')">Edit</a></td>
+                        <td><a href="#"
+                                onClick="deleteType('this.typeID')">Delete</a></td>
+                        <td>3</td>
+                        <td>Earth Dragon</td>
+                        <td>30</td>
+                        <td>1500</td>
+                        <td>300</td>
+                        <td>12</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>&nbsp;</p>
 
         <!-- add new dragon type -->
-        <p>&nbsp;</p>
-        <div id="insert" style="display: none;">
+        <div id="insert" style="display: none">
             <form method="POST" id="addType">
                 <legend><strong>Add New Type</strong></legend>
                 <fieldset class="fields">
@@ -135,9 +136,9 @@
                     <label>Average Age (yrs):</label> <input type="number"
                         name="type_average_age"><br>
                 </fieldset>
-                <input class="btn" type="submit" value="Add Type">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">
+                <input class="btn" type="submit" value="Add Type">
             </form>
         </div>
 
@@ -157,9 +158,9 @@
                     <label>Average Age (years):</label> <input type="number"
                         name="type_average_age" value="200"><br>
                 </fieldset>
-                <input class="btn" type="submit" value="Save Type">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">
+                <input class="btn" type="submit" value="Save Type">
             </form>
         </div>
 
@@ -174,9 +175,9 @@
                     <label>ID:</label> 1 <br>
                     <label>Name:</label> Fire Dragon
                 </fieldset>
-                <input class="btn" type="submit" value="Delete Type">
-                <input class="btn" type="button" value="Cancel"
+                <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">
+                <input class="btn" type="submit" value="Delete Type">
             </form>
         </div>
 
