@@ -1,131 +1,116 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Ensure the DOM is fully loaded before attaching event listeners
-//     let updateDragonForm = document.getElementById('update-dragon-form-ajax');
-//     if (!updateDragonForm) {
-//         console.error('Update dragon form not found');
-//         return;
-//     }
+let updateDragonForm = document.getElementById('update-dragon-form-ajax');
 
-//     updateDragonForm.addEventListener("submit", function(e) {
-//         e.preventDefault(); // Prevent the default form submission
+// Modify the objects we need
+updateDragonForm.addEventListener("submit", function (e) {
+   
+    // Prevent the form from submitting
+    e.preventDefault();
 
-//         // Collect form data
-//         let formData = {
-//             dragon_id: document.querySelector("input[name='dragon_id']").value,
-//             name: document.getElementById("input-name").value,
-//             type: document.getElementById("input-type").value,
-//             height: document.getElementById("input-height").value,
-//             weight: document.getElementById("input-weight").value,
-//             age: document.getElementById("input-age").value,
-//             personality: document.getElementById("input-personality").value,
-//             alignment: document.getElementById("input-alignment").value,
-//             environment: document.getElementById("input-environment").value,
-//             abilities: Array.from(document.querySelectorAll("#abilities option:checked")).map(option => option.value),
-//             number_of_people_killed: document.getElementById("input-number_of_people_killed").value,
-//             lore: document.getElementById("input-Lore").value
-//         };
+    // Get form fields we need to get data from
+    let dragonId = document.querySelector("input[name='dragon_id']").value;
+    let inputName = document.getElementById("input-name");
+    let inputType = document.getElementById("input-type");
+    let inputHeight = document.getElementById("input-height")
+    let inputWeight = document.getElementById("input-weight");
+    let inputAge = document.getElementById("input-age");
+    let inputPersonality = document.getElementById("input-personality");
+    let inputAlignment = document.getElementById("input-alignment");
+    let inputEnvironment = document.getElementById("input-environment");
+    let inputAbilities = document.getElementById("input-abilities");
+    let inputNumber_of_people_killed = document.getElementById("input-number_of_people_killed");
+    let inputLore = document.getElementById("input-lore");
 
-//         console.log("Form data to send:", formData);
+    // Get the values from the form fields
+    let nameValue = inputName.value;
+    let typeValue = inputType.value;
+    let heightValue = inputHeight.value;
+    let weightValue = inputWeight.value;
+    let ageValue = inputAge.value;
+    let personalityValue = inputPersonality.value;
+    let alignmentValue = inputAlignment.value;
+    let environmentValue = inputEnvironment.value;
+    let abilitiesValue = inputAbilities.value;
+    let number_of_people_killedValue = inputNumber_of_people_killed.value;
+    let loreValue = inputLore.Value
 
-//         // Setup AJAX request
-//         var xhttp = new XMLHttpRequest();
-//         xhttp.open("PUT", "/put-dragon-ajax", true);
-//         xhttp.setRequestHeader("Content-type", "application/json");
+    
+    // currently the database table for bsg_people does not allow updating values to NULL
+    // so we must abort if being bassed NULL for homeworld
 
-//         xhttp.onreadystatechange = function() {
-//             if (this.readyState == 4 && this.status == 200) {
-//                 console.log("Update successful:", this.responseText);
-//                 try {
-//                     let response = JSON.parse(this.responseText);
-//                     console.log("Parsed response:", response);
-//                     // Assuming your table row update logic is correct
-//                     updateRow(formData, formData.dragon_id);
-//                 } catch (error) {
-//                     console.error("Error parsing response JSON:", error, "Response was:", this.responseText);
-//                 }
-//             } else if (this.readyState == 4) {
-//                 console.error("Error with the request. Status:", this.status);
-//             }
-//         };
-
-//         // Send the request
-//         xhttp.send(JSON.stringify(formData));
-//     });
-// });
+    // if (isNaN(homeworldValue)) 
+    // {
+    //     return;
+    // }
 
 
-// function updateRow(formData, dragonID) {
-//     let table = document.getElementById("dragons-table");
-//     for (let i = 0; i < table.rows.length; i++) {
-//         let row = table.rows[i];
-//         if (row.getAttribute("data-value") == dragonID) {
-//             row.cells[1].innerText = formData.name; // Update only the name for testing
-//             console.log("Row updated with name:", formData.name);
-//             break;
-//         }
-//     }
-// }
+    // Put our data we want to send in a javascript object
+    let data = {
+        dragon_id: dragonId,
+        name: nameValue,
+        type: typeValue,
+        height: heightValue,
+        weight: weightValue,
+        age: ageValue,
+        personality: personalityValue,
+        alignment: alignmentValue,
+        environment: environmentValue,
+        abiltiies: abilitiesValue,
+        number_of_people_killed: number_of_people_killedValue,
+        lore: loreValue
+    }
+    
+    // Setup our AJAX request
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("PUT", "/put-dragon-ajax", true);
+    xhttp.setRequestHeader("Content-type", "application/json");
 
-document.addEventListener('DOMContentLoaded', function() {
-    const updateDragonForm = document.getElementById('update-dragon-form-ajax');
-    if (!updateDragonForm) {
-        console.error('Update dragon form not found');
-        return;
+    // Tell our AJAX request how to resolve
+    xhttp.onreadystatechange = () => {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+            // Add the new data to the table
+            updateRow(xhttp.response, data);
+
+        }
+        else if (xhttp.readyState == 4 && xhttp.status != 200) {
+            console.log("There was an error with the input.")
+        }
     }
 
-    updateDragonForm.addEventListener("submit", function(e) {
-        e.preventDefault();
+    // Send the request and wait for the response
+    xhttp.send(JSON.stringify(data));
 
-        // Retrieve the dragonId from the form's dataset
-        const dragonId = updateDragonForm.getAttribute('data-dragon-id');
-        const formData = {
-            name: document.getElementById("input-name").value,
-            type: document.getElementById("input-type").value,
-            height: document.getElementById("input-height").value,
-            weight: document.getElementById("input-weight").value,
-            age: document.getElementById("input-age").value,
-            personality: document.getElementById("input-personality").value,
-            alignment: document.getElementById("input-alignment").value,
-            environment: document.getElementById("input-environment").value,
-            number_of_people_killed: document.getElementById("input-number_of_people_killed").value,
-            lore: document.getElementById("input-lore").value,
-        };
+})
 
-        var xhttp = new XMLHttpRequest();
-        console.log(`/put-dragon-ajax/${dragonId}`);
-        xhttp.open("PUT", `/put-dragon-ajax/${dragonId}`, true);
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.onload = function() {
-            if (xhttp.status === 200) {
-                alert('Dragon updated successfully');
-                // Optionally, refresh the page or update the UI as needed
-                location.reload(); // This line will refresh the page. Remove it if you plan to update the UI directly.
-            } else {
-                alert('Failed to update dragon');
-            }
-        };
-        xhttp.send(JSON.stringify(formData));
-    });
-});
 
-function updateDragonRow(dragonId, formData) {
-    const table = document.getElementById("dragons-table");
-    const rows = table.getElementsByTagName("tr");
-    for (let i = 0; i < rows.length; i++) {
-        if (rows[i].getAttribute("data-value") === dragonId) {
-            // Assuming the order of cells matches the formData structure
-            rows[i].cells[1].innerText = formData.name;
-            rows[i].cells[2].innerText = formData.type; // You might need to adjust this based on how you display types
-            rows[i].cells[3].innerText = formData.height;
-            rows[i].cells[4].innerText = formData.weight;
-            rows[i].cells[5].innerText = formData.age;
-            rows[i].cells[6].innerText = formData.personality;
-            rows[i].cells[7].innerText = formData.alignment;
-            rows[i].cells[8].innerText = formData.environment; // Adjust based on how you display environments
-            rows[i].cells[9].innerText = formData.number_of_people_killed;
-            rows[i].cells[10].innerText = formData.lore;
-            // No need to update abilities here as they are not included in the formData
-            break;
-        }
+function updateRow(data, dragonID){
+    let parsedData = JSON.parse(data);
+    
+    let table = document.getElementById("dragons-table");
+
+    for (let i = 0, row; row = table.rows[i]; i++) {
+       //iterate through rows
+       //rows would be accessed using the "row" variable assigned in the for loop
+       if (table.rows[i].getAttribute("data-value") == dragonID) {
+
+            // Get the location of the row where we found the matching person ID
+            let updateRowIndex = table.getElementsByTagName("tr")[i];
+
+            // Get td of homeworld value
+            let td = updateRowIndex.getElementsByTagName("td")[i];
+
+            // Reassign homeworld to our value we updated to
+            td.innerHTML = parsedData[1].name; 
+            td.innerHTML = parsedData[2].type; 
+            td.innerHTML = parsedData[3].height; 
+            td.innerHTML = parsedData[4].weight; 
+            td.innerHTML = parsedData[5].age; 
+            td.innerHTML = parsedData[6].personality; 
+            td.innerHTML = parsedData[7].alignment; 
+            td.innerHTML = parsedData[8].environment; 
+            td.innerHTML = parsedData[9].abiltiies; 
+            td.innerHTML = parsedData[10].number_of_people_killed; 
+            td.innerHTML = parsedData[11].lore; 
+       }
     }
 }

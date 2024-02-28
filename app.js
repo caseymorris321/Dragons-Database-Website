@@ -251,35 +251,54 @@ app.post('/dragons/add', function (req, res) {
 //         });
 //     });
 // });
-app.put('/put-dragon-ajax/:dragon_id', (req, res) => {
-    const { dragon_id } = req.params;
-    const { name, type, height, weight, age, personality, alignment, environment, number_of_people_killed, lore } = req.body;
+app.put('/put-dragon-ajax', function(req, res) {
+    let data = req.body;
+    let dragonId = parseInt(data.dragon_id);
 
-    // Construct your SQL query to update the dragon information
-    const updateQuery = `
-        UPDATE Dragons
-        SET
-            dragon_name = ?,
-            type_id = ?,
-            dragon_height = ?,
-            dragon_weight = ?,
-            dragon_age = ?,
-            dragon_personality = ?,
-            dragon_alignment = ?,
-            environment_id = ?,
-            number_of_people_killed = ?,
-            dragon_lore = ?
+    // Update dragon basic information
+    let updateDragonQuery = `
+        UPDATE Dragons 
+        SET dragon_name = ?, type_id = ?, dragon_height = ?, dragon_weight = ?, 
+            dragon_age = ?, dragon_personality = ?, dragon_alignment = ?, 
+            environment_id = ?, number_of_people_killed = ?, dragon_lore = ? 
         WHERE dragon_id = ?`;
 
-    const queryParams = [name, type, height, weight, age, personality, alignment, environment, number_of_people_killed, lore, dragon_id];
-
-    db.pool.query(updateQuery, queryParams, (error, results) => {
+    db.pool.query(updateDragonQuery, [
+        data.name, data.type, data.height, data.weight, data.age, 
+        data.personality, data.alignment, data.environment, 
+        data.number_of_people_killed, data.lore, dragonId
+    ], function(error) {
         if (error) {
             console.error('Error updating dragon:', error);
-            return res.status(500).json({ error: 'Failed to update dragon information.' });
+            return res.sendStatus(500); // Internal Server Error
         }
-        // Assuming the update was successful, send a success response
-        res.json({ message: 'Dragon updated successfully.' });
+
+        // Handle abilities update
+        let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
+
+        db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function(deleteError) {
+            if (deleteError) {
+                console.error('Error deleting existing abilities:', deleteError);
+                return res.sendStatus(500); // Internal Server Error
+            }
+
+            // Insert new abilities for the dragon
+            if (data.abilities && data.abilities.length > 0) {
+                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ?`;
+                let abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId)]);
+
+                db.pool.query(insertAbilitiesQuery, [abilitiesValues], function(insertError) {
+                    if (insertError) {
+                        console.error('Error inserting new abilities:', insertError);
+                        return res.sendStatus(500); // Internal Server Error
+                    }
+                    res.send({ message: 'Dragon and abilities updated successfully.' });
+                });
+            } else {
+                // If there are no abilities to update, just send a success response
+                res.send({ message: 'Dragon updated successfully, no abilities to update.' });
+            }
+        });
     });
 });
 

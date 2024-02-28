@@ -161,7 +161,7 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
 
     <!-- update dragon -->
     <div id="update" style="display: none">
-        <form id='update-dragon-form-ajax' data-dragon-id="">
+        <form id='update-dragon-form-ajax'>
             <legend><strong>Update Dragon</strong></legend>
             <fieldset class="fields">
                 <label>ID:</label> <input type="text" name="dragon_id" id="update-dragon-id" ><br>
@@ -183,7 +183,7 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                 {{/each}}
             </select><br>
                 <label>Abilities:</label><small> Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small><br>
-                <select id="abilities" name="abilities[]" multiple >
+                <select id="input-abilities" name="abilities[]" multiple >
                 <!-- Dynamically populate abilities -->
                 {{#each abilities}}
                 <option value="{{this.ability_id}}">{{this.ability_name}}</option>
