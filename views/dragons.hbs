@@ -56,18 +56,23 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
     function browseDragons() { showform('browse'); }
     function showAll() { showform('all'); }
     function populateUpdateForm(dragonId) {
-             $.ajax({
+        $.ajax({
         url: `/dragons/${dragonId}`, // Adjust this URL to match your endpoint
         type: 'GET',
         success: function(data) {
 
             // Types Dropdown
             let typeSelect = document.getElementById('input-type');
-            Array.from(typeSelect.options).forEach(option => {
-                if (option.text === data.type) {
-                    option.selected = true;
-                }
-            });
+            if (!data.type) {
+                typeSelect.selectedIndex = 0;
+            } else {
+                Array.from(typeSelect.options).forEach(option => {
+                    if (option.text === data.type) {
+                        option.selected = true;
+                    }
+                });
+            }
+            
             // Environments Dropdown
              let environmentSelect = document.getElementById('input-environment');
             Array.from(environmentSelect.options).forEach(option => {
@@ -187,11 +192,11 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         name="dragon_name"><br>
                     <label for="type_id">Type:</label>
                     <select name="type_id" id="type_id">
+                        <option value>None</option>
                         {{#each types}}
                         <option
                             value="{{this.type_id}}">{{this.type_name}}</option>
                         {{/each}}
-                        <option value="">None</option>
                     </select>
                     <br>
                     <label>Height (ft):</label> <input type="number" step=".01"
@@ -245,11 +250,12 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Name:</label> <input type="text" id="input-name"
                         name="dragon_name"><br>
                     <label>Type:</label> <select name="type_id" id="input-type">
+                        <option value>None</option>
                         {{#each types}}
                         <option
                             value="{{this.type_id}}">{{this.type_name}}</option>
                         {{/each}}
-                        <option value="">None</option>
+
                     </select>
                     <br>
                     <label>Height (ft):</label> <input type="text"
