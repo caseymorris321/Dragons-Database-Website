@@ -147,11 +147,11 @@ app.get('/dragons/:id', function (req, res) {
 
 app.post('/dragons/add', function (req, res) {
     const data = req.body;
-
     // Insert dragon data
+    const typeId = data.type === "" ? null : data.type;
     const insertDragonQuery = `INSERT INTO Dragons (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    db.pool.query(insertDragonQuery, [data.dragon_name, data.type_id, data.dragon_height, data.dragon_weight, data.dragon_age, data.dragon_personality, data.dragon_alignment, data.environment_id, data.number_of_people_killed, data.dragon_lore], function (error, result) {
+    db.pool.query(insertDragonQuery, [data.dragon_name, typeId, data.dragon_height, data.dragon_weight, data.dragon_age, data.dragon_personality, data.dragon_alignment, data.environment_id, data.number_of_people_killed, data.dragon_lore], function (error, result) {
         if (error) {
             console.error(error);
             return res.sendStatus(500);
@@ -182,7 +182,7 @@ app.post('/dragons/add', function (req, res) {
 app.put('/put-dragon-ajax', function(req, res) {
     let data = req.body;
     let dragonId = parseInt(data.dragon_id);
-
+    const typeId = data.type === "" ? null : data.type;
     // Update dragon basic information
     let updateDragonQuery = `
         UPDATE Dragons 
@@ -192,7 +192,7 @@ app.put('/put-dragon-ajax', function(req, res) {
         WHERE dragon_id = ?`;
 
     db.pool.query(updateDragonQuery, [
-        data.name, data.type, data.height, data.weight, data.age, 
+        data.name, typeId, data.height, data.weight, data.age, 
         data.personality, data.alignment, data.environment, 
         data.number_of_people_killed, data.lore, dragonId
     ], function(error) {
