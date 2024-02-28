@@ -1,17 +1,19 @@
+<!-- Citation for the following code:
+Date: 12/22/2024 & 12/28/2024
+Adapted from two sources
+1. people.html starter code:
+Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
+2. nodejs-starterapp:
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 <!DOCTYPE html>
 <html>
-<!-- Citation for the following code:
-Date: 12/22/2024
-Adapted from people.html starter code:
-Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 -->
-<head>
-    <title>Dragons</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <head>
+        <title>Dragons</title>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-
-</head>
-<script language="JavaScript">
+        <script language="JavaScript">
     function showform(dowhat) {
         /*
         * four DIVS: browse, insert, update, delete
@@ -21,205 +23,295 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'block';
             document.getElementById('update').style.display = 'none';
-            document.getElementById('delete').style.display = 'none';
+            // document.getElementById('delete').style.display = 'none';
         }
         else if (dowhat == 'update') {
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'block';
-            document.getElementById('delete').style.display = 'none';
+            // document.getElementById('delete').style.display = 'none';
         }
         else if (dowhat == 'delete') {
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'none';
-            document.getElementById('delete').style.display = 'block';
+           // document.getElementById('delete').style.display = 'block';
         }
         else if (dowhat == 'all') {
             document.getElementById('browse').style.display = 'block';
             document.getElementById('insert').style.display = 'block';
             document.getElementById('update').style.display = 'block';
-            document.getElementById('delete').style.display = 'block';
+           // document.getElementById('delete').style.display = 'block';
         }
         else { //by default display browse
             document.getElementById('browse').style.display = 'block';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'none';
-            document.getElementById('delete').style.display = 'none';
+           // document.getElementById('delete').style.display = 'none';
         }
     }
     function newDragon() { showform('insert'); }
     function updateDragon(pid) { showform('update'); }
-    function deleteDragon(pid) { showform('delete'); }
+  //  function deleteDragon(pid) { showform('delete'); }
     function browseDragons() { showform('browse'); }
     function showAll() { showform('all'); }
-</script>
+    function populateUpdateForm(dragonId) {
+             $.ajax({
+        url: `/dragons/${dragonId}`, // Adjust this URL to match your endpoint
+        type: 'GET',
+        success: function(data) {
 
-</head>
-
-<body onload="browseDragons()">
-
-    <h1>Dragons</h1>
-
-    <nav class="navbar">
-        <ul>
-            <li><a href="dragons">Dragons</a></li>
-            <li><a href="types.html">Types</a></li>
-            <li><a href="abilities.html">Abilities</a></li>
-            <li><a href="environments.html">Environments</a></li>
-        </ul>
-    </nav>
-
-    <!-- browse -->
-    <div id="browse" style="display: block">
-    <p><a href="#" onClick="showAll()">Display all forms</a> </p>
-    <p><strong>Browse Dragons</strong></p>
+            // Types Dropdown
+            let typeSelect = document.getElementById('input-type');
+            Array.from(typeSelect.options).forEach(option => {
+                if (option.text === data.type) {
+                    option.selected = true;
+                }
+            });
+            // Environments Dropdown
+             let environmentSelect = document.getElementById('input-environment');
+            Array.from(environmentSelect.options).forEach(option => {
+                if (option.text === data.environment) {
+                    option.selected = true;
+                }
+            });
+              // Clear previous Abilities
+            let abilitiesSelect = document.getElementById('input-abilities');
+            Array.from(abilitiesSelect.options).forEach(option => {
+                option.selected = false;
+            });
         
-  <table id="dragons-table">
-    <thead>
-        <tr>
-            <td>
-                <button class="new-dragon-btn" onclick="newDragon()">New Dragon</button>
-            </td>
-        </tr>
-        <tr>
-            {{#each data.[0]}}
-            <th>{{@key}}</th>
-            {{/each}}
-            <th>edit</th>
-            <th>delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each data}}
-        <tr data-value={{this.ID}}>
-            <td align="center">{{this.ID}}</td>
-            <td align="center">{{this.Name}}</td>
-            <td align="center">{{this.Type}}</td>
-            <td align="center">{{this.Height}}</td>
-            <td align="center">{{this.Weight}}</td>
-            <td align="center">{{this.Age}}</td>
-            <td align="center">{{this.Personality}}</td>
-            <td align="center">{{this.Alignment}}</td>
-            <td align="center">{{this.Environment}}</td>
-            <td align="center">{{this.Abilities}}</td>
-            <td align="center">{{this.Number_of_People_Killed}}</td>
-            <td>{{this.Lore}}</td>
-            <!-- Add any additional columns here -->
-             <td><button class="edit-dragon-btn" onclick="updateDragon({{this.ID}})">Edit Dragon</button></td>
-            <td><button class="delete-dragon-btn" onclick="deleteDragon({{this.ID}})">Delete Dragon</button></td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
-    </div>
-    <p>&nbsp;</p>
+            document.getElementById('update-dragon-id').value = data.dragon_id;
+            document.getElementById('input-name').value = data.dragon_name;
+            document.getElementById('input-height').value = data.dragon_height;
+            document.getElementById('input-weight').value = data.dragon_weight;
+            document.getElementById('input-age').value = data.dragon_age;
+            document.getElementById('input-personality').value = data.dragon_personality;
+            document.getElementById('input-alignment').value = data.dragon_alignment;
+            document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
+            document.getElementById('input-lore').value = data.dragon_lore;
+
+            // Abilities Select
+            let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
+            abilitiesArray.forEach(ability => {
+                for (let option of abilitiesSelect.options) {
+                    if (option.text.trim() === ability.trim()) {
+                        option.selected = true;
+                        break; // Found the selected Ability
+                    }
+                }
+            });
+
+        },
+        error: function(error) {
+            console.log('Error fetching dragon details:', error);
+        }
+    })
+    
+
+    document.getElementById('update').style.display = 'block';
+}
+</script>
+    </head>
+
+    <body onload="browseDragons()">
+
+        <h1>Dragons</h1>
+
+        <nav class="navbar">
+            <ul>
+                <li><a href="dragons">Dragons</a></li>
+                <li><a href="types.html">Types</a></li>
+                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="environments.html">Environments</a></li>
+            </ul>
+        </nav>
+
+        <!-- browse -->
+        <div id="browse" style="display: block">
+            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            <p><strong>Browse Dragons</strong></p>
+
+            <table id="dragons-table">
+                <thead>
+                    <tr>
+                        <td>
+                            <button class="new-dragon-btn"
+                                onclick="newDragon()">New Dragon</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        {{#each data.[0]}}
+                        <th>{{@key}}</th>
+                        {{/each}}
+                        <th>edit</th>
+                        <th>delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each data}}
+                    <tr data-value={{this.ID}}>
+                        <td align="center">{{this.ID}}</td>
+                        <td align="center">{{this.Name}}</td>
+                        <td align="center">{{this.Type}}</td>
+                        <td align="center">{{this.Height}} ft</td>
+                        <td align="center">{{this.Weight}} lbs</td>
+                        <td align="center">{{this.Age}} yrs</td>
+                        <td align="center">{{this.Personality}}</td>
+                        <td align="center">{{this.Alignment}}</td>
+                        <td align="center">{{this.Environment}}</td>
+                        <td align="center">{{this.Abilities}}</td>
+                        <td align="center">{{this.Number_of_People_Killed}}</td>
+                        <td>{{this.Lore}}</td>
+
+                        <td><button class="edit-dragon-btn"
+                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Type}}', '{{this.Height}}', '{{this.Weight}}', '{{this.Age}}', '{{this.Personality}}', '{{this.Alignment}}', '{{this.Environment}}', '{{this.Abilities}}', '{{this.Number_of_People_Killed}}', '{{this.Lore}}')">Edit
+                                Dragon</button></td>
+                        <td><button class="delete-dragon-btn"
+                                onclick="deleteDragon({{this.ID}})">Delete
+                                Dragon</button></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <p>&nbsp;</p>
         <script src="./js/delete_dragon.js"></script>
 
+        <!--add new dragon-->
+        <div id="insert" style="display: none">
+            <form method="POST" id="add-dragon-form" action="/dragons/add">
+                <legend><strong>Add Dragon</strong></legend>
+                <fieldset class="fields">
+                    <label>Name:</label> <input type="text"
+                        name="dragon_name"><br>
+                    <label for="type_id">Type:</label>
+                    <select name="type_id" id="type_id">
+                        {{#each types}}
+                        <option
+                            value="{{this.type_id}}">{{this.type_name}}</option>
+                        {{/each}}
+                    </select>
+                    <br>
+                    <label>Height (ft):</label> <input type="number" step=".01"
+                        name="dragon_height"><br>
+                    <label>Weight (lbs):</label> <input type="number" step=".01"
+                        name="dragon_weight"><br>
+                    <label>Age:</label> <input type="number"
+                        name="dragon_age"><br>
+                    <label>Personality:</label> <input type="text"
+                        name="dragon_personality"><br>
+                    <label>Alignment:</label> <input type="text"
+                        name="dragon_alignment"><br>
+                    <label>Environment:</label> <select id="environment_id"
+                        name="environment_id">
+                        <!-- Dynamically populate environments -->
+                        {{#each environments}}
+                        <option
+                            value="{{this.environment_id}}">{{this.environment_name}}</option>
+                        {{/each}}
+                    </select><br>
+                    <label>Abilities:</label><small> Hold down the Ctrl
+                        (windows) or Command (Mac) button to select multiple
+                        options.</small><br>
+                    <select id="abilities" name="abilities[]" multiple>
+                        <!-- Dynamically populate abilities -->
+                        {{#each abilities}}
+                        <option
+                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        {{/each}}
+                    </select><br>
+                    <label>Number of People Killed:</label> <input type="number"
+                        name="number_of_people_killed"><br>
+                    <label>Lore:</label> <textarea id="dragon_lore"
+                        name="dragon_lore" rows="1" cols="20"></textarea>
+                </fieldset>
+                <input class="btn btn-cancel" type="button" value="Cancel"
+                    onClick="browseDragons()">
+                <input class="btn" type="submit" value="Add Dragon">
+            </form>
+        </div>
 
+        {{!-- <script src="./js/add_dragon.js"></script> --}}
 
+        <!-- update dragon -->
+        <div id="update" style="display: none">
+            <form id='update-dragon-form-ajax'>
+                <legend><strong>Update Dragon</strong></legend>
+                <fieldset class="fields">
+                    <label>ID:</label> <input type="text" name="dragon_id"
+                        id="update-dragon-id" readonly><br>
+                    <label>Name:</label> <input type="text" id="input-name"
+                        name="dragon_name"><br>
+                    <label>Type:</label> <select name="type_id" id="input-type">
+                        {{#each types}}
+                        <option
+                            value="{{this.type_id}}">{{this.type_name}}</option>
+                        {{/each}}
+                    </select>
+                    <br>
+                    <label>Height (ft):</label> <input type="text"
+                        id="input-height" name="dragon_height"><br>
+                    <label>Weight (lbs):</label> <input type="text"
+                        id="input-weight" name="dragon_weight"><br>
+                    <label>Age:</label> <input type="number" id="input-age"
+                        name="dragon_age"><br>
+                    <label>Personality:</label> <input type="text"
+                        id="input-personality" name="dragon_personality"><br>
+                    <label>Alignment:</label> <input type="text"
+                        id="input-alignment" name="dragon_alignment"><br>
+                    <label>Environment:</label> <select id="input-environment"
+                        name="environment_id">
+                        <!-- Dynamically populate environments -->
+                        {{#each environments}}
+                        <option
+                            value="{{this.environment_id}}">{{this.environment_name}}</option>
+                        {{/each}}
+                    </select>
+                    <br>
+                    <label>Abilities:</label><small> Hold down the Ctrl
+                        (windows) or Command (Mac) button to select multiple
+                        options.</small><br>
+                    <select id="input-abilities" name="abilities[]" multiple>
+                        <!-- Dynamically populate abilities -->
+                        {{#each abilities}}
+                        <option
+                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        {{/each}}
+                    </select>
+                    <br>
+                    <label>Number of People Killed:</label> <input type="number"
+                        id="input-number_of_people_killed"
+                        name="number_of_people_killed">
+                    <br>
+                    <label>Lore:</label> <textarea id="input-lore"
+                        name="dragon_lore" rows="1" cols="20"></textarea>
+                    <br>
+                </fieldset>
+                <input class="btn btn-cancel" type="button" value="Cancel"
+                    onClick="browseDragons()">
+                <input class="btn" type="submit" value="Save Dragon">
+            </form>
+        </div>
+        <script src="./js/update_dragon.js"></script>
 
-    <!--add new dragon-->
-    <div id="insert" style="display: none">
-        <form method="POST" id="add-dragon-form" action="/dragons/add">
-            <legend><strong>Add Dragon</strong></legend>
-            <fieldset class="fields">
-                <label>Name:</label> <input type="text" name="dragon_name"><br>
-                 <label for="type_id">Type:</label>
-    <select name="type_id" id="type_id">
-        {{#each types}}
-        <option value="{{this.type_id}}">{{this.type_name}}</option>
-        {{/each}}
-    </select><br>
-                <label>Height (ft):</label> <input type="text" name="dragon_height"><br>
-                <label>Weight (lbs):</label> <input type="text" name="dragon_weight"><br>
-                <label>Age:</label> <input type="number" name="dragon_age"><br>
-                <label>Personality:</label> <input type="text" name="dragon_personality"><br>
-                <label>Alignment:</label> <input type="text" name="dragon_alignment"><br>
-                <label>Environment:</label> <select id="environment_id" name="environment_id" >
-                <!-- Dynamically populate environments -->
-                {{#each environments}}
-                <option value="{{this.environment_id}}">{{this.environment_name}}</option>
-                {{/each}}
-            </select><br>
-                <label>Abilities:</label><small> Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small><br>
-                <select id="abilities" name="abilities[]" multiple >
-                <!-- Dynamically populate abilities -->
-                {{#each abilities}}
-                <option value="{{this.ability_id}}">{{this.ability_name}}</option>
-                {{/each}}
-            </select><br>
-                <label>Number of People Killed:</label> <input type="number" name="number_of_people_killed"><br>
-                <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="1" cols="20"></textarea>
-            </fieldset>
-            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
-            <input class="btn" type="submit" value="Add Dragon">
-        </form>
-    </div>
-
-    {{!-- <script src="./js/add_dragon.js"></script> --}}
-
-    <!-- update dragon -->
-    <div id="update" style="display: none">
-        <form id='update-dragon-form-ajax'>
-            <legend><strong>Update Dragon</strong></legend>
-            <fieldset class="fields">
-                <label>ID:</label> <input type="text" name="dragon_id" id="update-dragon-id" ><br>
-                <label>Name:</label> <input type="text" id="input-name" name="dragon_name"><br>
-                <label>Type:</label>    <select name="type_id" id="input-type">
-        {{#each types}}
-        <option value="{{this.type_id}}">{{this.type_name}}</option>
-        {{/each}}
-    </select><br>
-                <label>Height (ft):</label> <input type="text" id="input-height" name="dragon_height"><br>
-                <label>Weight (lbs):</label> <input type="text" id="input-weight" name="dragon_weight" ><br>
-                <label>Age:</label> <input type="number" id="input-age" name="dragon_age" ><br>
-                <label>Personality:</label> <input type="text" id="input-personality" name="dragon_personality" ><br>
-                <label>Alignment:</label> <input type="text" id="input-alignment" name="dragon_alignment" ><br>
-                <label>Environment:</label> <select id="input-environment" name="environment_id" >
-                <!-- Dynamically populate environments -->
-                {{#each environments}}
-                <option value="{{this.environment_id}}">{{this.environment_name}}</option>
-                {{/each}}
-            </select><br>
-                <label>Abilities:</label><small> Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small><br>
-                <select id="input-abilities" name="abilities[]" multiple >
-                <!-- Dynamically populate abilities -->
-                {{#each abilities}}
-                <option value="{{this.ability_id}}">{{this.ability_name}}</option>
-                {{/each}}
-            </select><br>
-                <label>Number of People Killed:</label> <input type="number" id="input-number_of_people_killed" name="number_of_people_killed"
-                    ><br>
-                <label>Lore:</label> <textarea id="input-lore" name="dragon_lore" rows="1" cols="20"></textarea><br>
-            </fieldset>
-            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
-            <input class="btn" type="submit" value="Save Dragon">
-        </form>
-    </div>
-
-    <script src="./js/update_dragon.js"></script>
-
-
-
-    <!-- delete dragon -->
-    <div id="delete" style="display: none">
-        <form id="delete-dragon-ajax">
-            <legend><strong>Delete Dragon</strong></legend>
-            <fieldset class="fields">
-                <p>Are you sure you wish to delete the following dragon?</p>
-                <input type="hidden" name="dragonID" id="deletedragonID" value="1">
-                <label>ID:</label><br>
-                <label>Name:</label>
-            </fieldset>
-            <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
-            <input class="btn" id="deleteDragonButton" type="submit" value="Delete Dragon">
-        </form>
-    </div>
-
-
-</body>
-
-
+        <!-- delete dragon obsolete now -->
+        {{!-- <div id="delete" style="display: none">
+            <form id="delete-dragon-ajax">
+                <legend><strong>Delete Dragon</strong></legend>
+                <fieldset class="fields">
+                    <p>Are you sure you wish to delete the following dragon?</p>
+                    <input type="hidden" name="dragonID" id="deletedragonID"
+                        value="1">
+                    <label>ID:</label><br>
+                    <label>Name:</label>
+                </fieldset>
+                <input class="btn btn-cancel" type="button" value="Cancel"
+                    onClick="browseDragons()">
+                <input class="btn" id="deleteDragonButton" type="submit"
+                    value="Delete Dragon">
+            </form>
+        </div> --}}
+    </body>
 
 </html>

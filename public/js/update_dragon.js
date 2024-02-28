@@ -1,10 +1,15 @@
+// <!-- Citation for the following code:
+// Date: 12/28/2024
+// Adapted from nodejs-starterapp:
+// https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
+
 let updateDragonForm = document.getElementById('update-dragon-form-ajax');
 
 // Modify the objects we need
 updateDragonForm.addEventListener("submit", function (e) {
    
     // Prevent the form from submitting
-    e.preventDefault();
+    // e.preventDefault()
 
     // Get form fields we need to get data from
     let dragonId = document.querySelector("input[name='dragon_id']").value;
@@ -31,18 +36,21 @@ updateDragonForm.addEventListener("submit", function (e) {
     let environmentValue = inputEnvironment.value;
     let abilitiesValue = inputAbilities.value;
     let number_of_people_killedValue = inputNumber_of_people_killed.value;
-    let loreValue = inputLore.Value
+    let loreValue = inputLore.value
 
-    
-    // currently the database table for bsg_people does not allow updating values to NULL
-    // so we must abort if being bassed NULL for homeworld
-
-    // if (isNaN(homeworldValue)) 
+    // if (isNaN(typeValue)) 
     // {
     //     return;
     // }
 
+    let selectedOptions = inputAbilities.selectedOptions;
+    let selectedAbilities = []; // Initialize the array to store selected abilities
 
+    // Loop through the selected options and add their values to the selectedAbilities array
+    for (let option of selectedOptions) {
+        selectedAbilities.push(option.value);
+    }
+    
     // Put our data we want to send in a javascript object
     let data = {
         dragon_id: dragonId,
@@ -54,7 +62,7 @@ updateDragonForm.addEventListener("submit", function (e) {
         personality: personalityValue,
         alignment: alignmentValue,
         environment: environmentValue,
-        abiltiies: abilitiesValue,
+        abilities: selectedAbilities,
         number_of_people_killed: number_of_people_killedValue,
         lore: loreValue
     }
@@ -93,13 +101,11 @@ function updateRow(data, dragonID){
        //rows would be accessed using the "row" variable assigned in the for loop
        if (table.rows[i].getAttribute("data-value") == dragonID) {
 
-            // Get the location of the row where we found the matching person ID
             let updateRowIndex = table.getElementsByTagName("tr")[i];
 
-            // Get td of homeworld value
             let td = updateRowIndex.getElementsByTagName("td")[i];
 
-            // Reassign homeworld to our value we updated to
+            // Reassign data to our value we updated to
             td.innerHTML = parsedData[1].name; 
             td.innerHTML = parsedData[2].type; 
             td.innerHTML = parsedData[3].height; 
