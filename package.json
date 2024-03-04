@@ -1,7 +1,26 @@
 {
   "dependencies": {
     "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
     "forever": "^4.0.3",
     "mysql": "^2.18.1"
-  }
+  },
+  "name": "dragons",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caseymorris321/dragons_db.git"
+  },
+  "keywords": [],
+  "author": "Casey Morris & Amadou Diallo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caseymorris321/dragons_db/issues"
+  },
+  "homepage": "https://github.com/caseymorris321/dragons_db#readme",
+  "description": ""
 }
