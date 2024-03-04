@@ -1,3 +1,11 @@
+/* Reset styles */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .navbar {
     text-align: center;
 }
@@ -47,6 +55,19 @@ h1 {
     text-align: center;
 }
 
+.new-button-container {
+    border: none;
+    text-align: center;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    /* This will affect inline or inline-block elements like text and buttons */
+}
 
 .new-dragon-btn {
     background-color: green;
@@ -56,10 +77,11 @@ h1 {
     cursor: pointer;
     border-radius: 5px;
     margin-top: 10px;
-    margin: 0 auto;
+    margin: 10px auto;
+    display: block;
 }
 
-.edit-dragon-btn{
+.edit-dragon-btn {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -70,7 +92,7 @@ h1 {
     margin: 0 auto;
 }
 
-.delete-dragon-btn{
+.delete-dragon-btn {
     background-color: red;
     color: #fff;
     border: none;
@@ -83,7 +105,7 @@ h1 {
 
 table {
     border-collapse: collapse;
-    margin: 0 auto;
+    margin: auto;
 }
 
 th,
@@ -124,17 +146,34 @@ input[type="button"] {
     cursor: pointer;
     border-radius: 5px;
     margin-top: 10px;
+    font-size: 18px;
 }
 
 .btn-cancel {
     background-color: red !important;
     color: white;
+    font-size: 18px;
+}
+.btn-cancel:hover {
+    background-color: rgb(121, 0, 0) !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
 
+button{
+    font-size: 18px;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 input[type="submit"]:hover,
 input[type="button"]:hover {
     background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .error-message {

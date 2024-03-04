@@ -147,7 +147,7 @@ app.get('/dragons/:id', function (req, res) {
 app.post('/dragons/add', function (req, res) {
     const data = req.body;
     // Insert dragon data
-    const typeId = data.type === "" ? null : data.type;
+    const typeId = data.type_id === "" ? null : data.type_id;
     const insertDragonQuery = `INSERT INTO Dragons (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.pool.query(insertDragonQuery, [data.dragon_name, typeId, data.dragon_height, data.dragon_weight, data.dragon_age, data.dragon_personality, data.dragon_alignment, data.environment_id, data.number_of_people_killed, data.dragon_lore], function (error, result) {
