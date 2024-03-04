@@ -3,9 +3,9 @@
 // Adapted from nodejs-starterapp:
 // https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
-function deleteDragon(dragonID) {
+function deleteEnvironment(environmentID) {
   if (confirm("Are you sure you want to delete this environment?")) {
-      let link = '/delete-wnvironment-ajax/';
+      let link = '/delete-environment-ajax/';
       let data = {
           id: dragonID
       };
