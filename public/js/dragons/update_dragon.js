@@ -43,13 +43,18 @@ updateDragonForm.addEventListener("submit", function (e) {
     //     return;
     // }
 
-    let selectedOptions = inputAbilities.selectedOptions;
-    let selectedAbilities = []; // Initialize the array to store selected abilities
+    // let selectedOptions = inputAbilities.selectedOptions;
+    // let selectedAbilities = []; // Initialize the array to store selected abilities
 
-    // Loop through the selected options and add their values to the selectedAbilities array
-    for (let option of selectedOptions) {
-        selectedAbilities.push(option.value);
-    }
+    // // Loop through the selected options and add their values to the selectedAbilities array
+    // for (let option of selectedOptions) {
+    //     selectedAbilities.push(option.value);
+    // }
+
+    var checkedAbilities = [];
+    document.querySelectorAll('input[name="abilities[]"]:checked').forEach(function(checkbox) {
+        checkedAbilities.push(checkbox.value);
+    });
 
     // Put our data we want to send in a javascript object
     let data = {
@@ -62,7 +67,7 @@ updateDragonForm.addEventListener("submit", function (e) {
         personality: personalityValue,
         alignment: alignmentValue,
         environment: environmentValue,
-        abilities: selectedAbilities,
+        abilities: checkedAbilities,
         number_of_people_killed: number_of_people_killedValue,
         lore: loreValue
     }

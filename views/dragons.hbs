@@ -95,23 +95,11 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     option.selected = true;
                 }
             });
-              // Clear previous Abilities
-            let abilitiesSelect = document.getElementById('input-abilities');
-            Array.from(abilitiesSelect.options).forEach(option => {
-                option.selected = false;
-            });
-
-            // Abilities Select
-            let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
-            abilitiesArray.forEach(ability => {
-                for (let option of abilitiesSelect.options) {
-                    if (option.text.trim() === ability.trim()) {
-                        option.selected = true;
-                        break; // Found the selected Ability
-                    }
-                }
-            });
-
+            
+            // Abilities checkbox
+        
+            
+           
         },
         error: function(error) {
             console.log('Error fetching dragon details:', error);
@@ -191,8 +179,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
         <!--add new dragon-->
         <div id="insert" style="display: none">
-            <form method="POST" id="add-dragon-form" action="/dragons/add"
-            >
+            <form method="POST" id="add-dragon-form" action="/dragons/add">
                 <legend><strong>Add Dragon</strong></legend>
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
@@ -240,13 +227,12 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Abilities:</label><small> Hold down the Ctrl
                         (windows) or Command (Mac) button to select multiple
                         options.</small><br>
-                    <select id="abilities" name="abilities[]" multiple required>
-                        <!-- Dynamically populate abilities -->
-                        {{#each abilities}}
-                        <option
-                            value="{{this.ability_id}}">{{this.ability_name}}</option>
-                        {{/each}}
-                    </select><br>
+                    {{#each abilities}}
+                    <input type="checkbox" id="ability-{{this.ability_id}}"
+                        name="abilities[]" value="{{this.ability_id}}">
+                    {{this.ability_name}}<br>
+                    {{/each}}
+                    <br>
                     <label>Number of People Killed:</label> <input type="number"
                         min="0"
                         name="number_of_people_killed" required><br>
@@ -256,7 +242,8 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseDragons()">
-                <input class="btn" id="submitDragonForm" type="submit" value="Add Dragon">
+                <input class="btn" id="submitDragonForm" type="submit"
+                    value="Add Dragon">
             </form>
         </div>
 
@@ -316,14 +303,11 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Abilities:</label><small> Hold down the Ctrl
                         (windows) or Command (Mac) button to select multiple
                         options.</small><br>
-                    <select id="input-abilities" name="abilities[]" multiple
-                        required>
-                        <!-- Dynamically populate abilities -->
-                        {{#each abilities}}
-                        <option
-                            value="{{this.ability_id}}">{{this.ability_name}}</option>
-                        {{/each}}
-                    </select>
+                    {{#each abilities}}
+                    <input type="checkbox" id="ability-{{this.ability_id}}"
+                        name="abilities[]" value="{{this.ability_id}}">
+                    {{this.ability_name}}<br>
+                    {{/each}}
                     <br>
                     <label>Number of People Killed:</label> <input type="number"
                         min="0"

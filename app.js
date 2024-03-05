@@ -12,7 +12,7 @@ var path = require('path');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
-PORT = 39005;                 // Set a port number at the top so it's easy to change in the future
+PORT = 39006;                 // Set a port number at the top so it's easy to change in the future
 const { engine } = require('express-handlebars');
 var exphbs = require('express-handlebars');     // Import express-handlebars
 app.engine('.hbs', engine({ extname: ".hbs" }));  // Create an instance of the handlebars engine to process templates
