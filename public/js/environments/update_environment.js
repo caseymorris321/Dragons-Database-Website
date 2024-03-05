@@ -12,28 +12,16 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
     // e.preventDefault()
 
     // Get form fields we need to get data from
-    let environmentId = document.querySelector("input[name='environment_id']").value;
-    let inputName = document.getElementById("input-name");
-    let inputTerrain = document.getElementById("input-terrain");
-    let inputClimate = document.getElementById("input-climate");
+    let environmentId = document.getElementById("update-environment-id").value;
+    let inputName = document.getElementById("input-environment-name");
+    let inputTerrain = document.getElementById("input-environment-terrain");
+    let inputClimate = document.getElementById("input-environment-climate");
 
     // Get the values from the form fields
     let nameValue = inputName.value;
     let terrainValue = inputTerrain.value;
     let climateValue = inputClimate.value
 
-    // if (isNaN(typeValue)) 
-    // {
-    //     return;
-    // }
-
-    let selectedOptions = inputName.selectedOptions;
-    let selectedName = []; // Initialize the array to store selected environment
-
-    // Loop through the selected options and add their values to the selectedName array
-    for (let option of selectedOptions) {
-        selectedName.push(option.value);
-    }
     
     // Put our data we want to send in a javascript object
     let data = {
@@ -52,8 +40,9 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
     xhttp.onreadystatechange = () => {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-            // Add the new data to the table
-            updateRow(xhttp.response, data);
+            alert("Environment updated successfully");
+            updateRow(xttp.response, data)
+            window.location.reload();
 
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {

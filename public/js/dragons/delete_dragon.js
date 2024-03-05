@@ -17,6 +17,7 @@ function deleteDragon(dragonID) {
             contentType: "application/json; charset=utf-8",
             success: function (result) {
                 deleteRow(dragonID);
+                alert("Dragon deleted successfully");
             }
         });
     }

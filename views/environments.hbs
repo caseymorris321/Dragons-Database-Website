@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
-<!-- Citation for the following code:
+    <!-- Citation for the following code:
 Date: 12/22/2024
 Adapted from people.html starter code:
 Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 -->
     <head>
         <title>Dragon Environments</title>
         <link href="/css/style.css" rel="stylesheet" type="text/css">
+        <script
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script language="JavaScript">
         function showform(dowhat) {
             /*
@@ -49,6 +51,23 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
         function deleteEnvironment(pid) { showform('delete'); }
         function browseEnvironments() { showform('browse'); }
         function showAll() { showform('all'); }
+        function populateUpdateForm(environmentId) {
+    $.ajax({
+        url: `/environments/${environmentId}`,
+        type: 'GET',
+        success: function(data) {
+            document.getElementById('update-environment-id').value = data.environment_id; 
+            document.getElementById('input-environment-name').value = data.environment_name;
+            document.getElementById('input-environment-terrain').value = data.environment_terrain;
+            document.getElementById('input-environment-climate').value = data.environment_climate;
+        },
+        error: function(error) {
+            console.log('Error fetching environment details:', error);
+        }
+    });
+    document.getElementById('update').style.display = 'block';
+}
+
     </script>
 
     </head>
@@ -61,101 +80,93 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
-                <li><a href="types.html">Types</a></li>
+                <li><a href="types">Types</a></li>
                 <li><a href="abilities.html">Abilities</a></li>
-                <li><a href="environments.html">Environments</a></li>
+                <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
 
         <!-- browse -->
         <div id="browse" style="display: block">
-            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p> --}}
             <p><strong>Browse Dragon Environments</strong></p>
-            <table>
+            <button class="new-btn"
+                onclick="newEnvironment()">New Environment</button>
+            <table ID="environments-table">
                 <thead>
                     <tr>
-                        <th><a href="#" onClick="newEnvironment()">New</a></th>
-                        <td></td>
-                        <th>Environment ID</th>
-                        <th>Name</th>
-                        <th>Terrain</th>
-                        <th>Climate</th>
+                        {{#each data.[0]}}
+                        <th>{{@key}}</th>
+                        {{/each}}
+                        <th>edit</th>
+                        <th>delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                        <td>1</td>
-                        <td>Volcanic Caverns</td>
-                        <td>Rocky</td>
-                        <td>Hot</td>
+                    {{#each data}}
+                    <tr data-value={{this.ID}}>
+                        <td>{{this.ID}}</td>
+                        <td>{{this.Name}}</td>
+                        <td>{{this.Terrain}}</td>
+                        <td>{{this.Climate}}</td>
+                        <!-- Display additional data here if necessary -->
+                        <td align="center">
+                            <button class="edit-btn"
+                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Terrain}}', '{{this.Climate}}')">Edit
+                                Type</button>
+                        </td>
+                        <td align="center">
+                            <button class="delete-btn"
+                                onclick="deleteEnvironment('{{this.ID}}')">Delete
+                                Environment</button>
+                        </td>
                     </tr>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                        <td>2</td>
-                        <td>Frozen Tundra</td>
-                        <td>Snowy</td>
-                        <td>Cold</td>
-                    </tr>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateEnvironment('this.EnvironmentID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteEnvironment('this.EnvironmentID')">Delete</a></td>
-                        <td>3</td>
-                        <td>Mountain Range</td>
-                        <td>Varied</td>
-                        <td>Moderate</td>
-                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
-        <p>&nbsp;</p>
+        <script src="./js/environments/delete_environment.js"></script>
 
         <!-- add new environment -->
         <div id="insert" style="display: none;">
-            <form method="POST" id="addEnvironment">
+            <form method="POST" id="add-environment-form" action="/environments/add">
                 <legend><strong>Add New Environment</strong></legend>
                 <fieldset>
                     <label>Name:</label> <input type="text"
-                        name="environment_name"><br>
+                        name="environment_name" required><br>
                     <label>Terrain:</label> <input type="text"
-                        name="environment_terrain"><br>
+                        name="environment_terrain" required><br>
                     <label>Climate:</label> <input type="text"
-                        name="environment_climate"><br>
+                        name="environment_climate" required><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
-                <input class="btn" type="submit" value="Add Environment">
+                <input class="btn" id="submitEnvironmentForm" type="submit" value="Add Environment">
             </form>
         </div>
+        <script src="./js/environments/add_environment.js"></script>
 
         <!-- update environment -->
 
         <div id="update" style="display: none;">
-            <form method="POST" id="updateEnvironment">
+            <form id="update-environment-form-ajax">
                 <legend><strong>Update Environment</strong></legend>
                 <fieldset>
                     <label>Environment ID:</label> <input type="text"
-                        name="environment_id" value="1" readonly><br>
-                    <label>Name:</label> <input type="text"
-                        name="environment_name" value="Volcanic Caverns"><br>
-                    <label>Terrain:</label> <input type="text"
-                        name="environment_terrain" value="Rocky"><br>
-                    <label>Climate:</label> <input type="text"
-                        name="environment_climate" value="Hot"><br>
+                        name="environment_id" id="update-environment-id"  readonly><br>
+                    <label>Name:</label> <input type="text" id="input-environment-name"
+                        name="environment_name" required><br>
+                    <label>Terrain:</label> <input type="text" id="input-environment-terrain"
+                        name="environment_terrain" required><br>
+                    <label>Climate:</label> <input type="text" id="input-environment-climate"
+                        name="environment_climate" required><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
                 <input class="btn" type="submit" value="Save Environment">
             </form>
         </div>
+        <script src="./js/environments/update_environment.js"></script>
 
         <!-- delete environment -->
 

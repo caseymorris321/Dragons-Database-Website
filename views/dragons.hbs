@@ -50,6 +50,8 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
            // document.getElementById('delete').style.display = 'none';
         }
     }
+
+
     function newDragon() { showform('insert'); }
     function updateDragon(pid) { showform('update'); }
   //  function deleteDragon(pid) { showform('delete'); }
@@ -60,11 +62,24 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         url: `/dragons/${dragonId}`, // Adjust this URL to match your endpoint
         type: 'GET',
         success: function(data) {
+            document.getElementById('update-dragon-id').value = data.dragon_id;
+            document.getElementById('input-name').value = data.dragon_name;
+            document.getElementById('input-height').value = data.dragon_height;
+            document.getElementById('input-weight').value = data.dragon_weight;
+            document.getElementById('input-age').value = data.dragon_age;
+            document.getElementById('input-personality').value = data.dragon_personality;
+            document.getElementById('input-alignment').value = data.dragon_alignment;
+            document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
+            document.getElementById('input-lore').value = data.dragon_lore;
 
             // Types Dropdown
             let typeSelect = document.getElementById('input-type');
             if (!data.type) {
-                typeSelect.selectedIndex = 0;
+                Array.from(typeSelect.options).forEach(option => {
+                    if (option.value === "") { // Assuming "None" is a placeholder value for no type
+                        option.selected = true;
+                    }
+                });
             } else {
                 Array.from(typeSelect.options).forEach(option => {
                     if (option.text === data.type) {
@@ -85,16 +100,6 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             Array.from(abilitiesSelect.options).forEach(option => {
                 option.selected = false;
             });
-        
-            document.getElementById('update-dragon-id').value = data.dragon_id;
-            document.getElementById('input-name').value = data.dragon_name;
-            document.getElementById('input-height').value = data.dragon_height;
-            document.getElementById('input-weight').value = data.dragon_weight;
-            document.getElementById('input-age').value = data.dragon_age;
-            document.getElementById('input-personality').value = data.dragon_personality;
-            document.getElementById('input-alignment').value = data.dragon_alignment;
-            document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
-            document.getElementById('input-lore').value = data.dragon_lore;
 
             // Abilities Select
             let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
@@ -127,9 +132,9 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
-                <li><a href="types.html">Types</a></li>
+                <li><a href="types">Types</a></li>
                 <li><a href="abilities.html">Abilities</a></li>
-                <li><a href="environments.html">Environments</a></li>
+                <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
 
@@ -139,7 +144,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             --}}
             <p><strong>Browse Dragons</strong></p>
             <div class="new-button-container">
-                <button class="new-dragon-btn"
+                <button class="new-btn"
                     onclick="newDragon()">New Dragon</button>
             </div>
             <table id="dragons-table">
@@ -171,10 +176,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         <td align="center">{{this.Number_of_People_Killed}}</td>
                         <td>{{this.Lore}}</td>
 
-                        <td><button class="edit-dragon-btn"
+                        <td><button class="edit-btn"
                                 onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Type}}', '{{this.Height}}', '{{this.Weight}}', '{{this.Age}}', '{{this.Personality}}', '{{this.Alignment}}', '{{this.Environment}}', '{{this.Abilities}}', '{{this.Number_of_People_Killed}}', '{{this.Lore}}')">Edit
                                 Dragon</button></td>
-                        <td><button class="delete-dragon-btn"
+                        <td><button class="delete-btn"
                                 onclick="deleteDragon({{this.ID}})">Delete
                                 Dragon</button></td>
                     </tr>
@@ -182,11 +187,12 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 </tbody>
             </table>
         </div>
-        <script src="./js/delete_dragon.js"></script>
+        <script src="./js/dragons/delete_dragon.js"></script>
 
         <!--add new dragon-->
         <div id="insert" style="display: none">
-            <form method="POST" id="add-dragon-form" action="/dragons/add">
+            <form method="POST" id="add-dragon-form" action="/dragons/add"
+            >
                 <legend><strong>Add Dragon</strong></legend>
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
@@ -250,11 +256,11 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseDragons()">
-                <input class="btn" type="submit" value="Add Dragon">
+                <input class="btn" id="submitDragonForm" type="submit" value="Add Dragon">
             </form>
         </div>
 
-        {{!-- <script src="./js/add_dragon.js"></script> --}}
+        <script src="./js/dragons/add_dragon.js"></script>
 
         <!-- update dragon -->
         <div id="update" style="display: none">
@@ -334,7 +340,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <input class="btn" type="submit" value="Save Dragon">
             </form>
         </div>
-        <script src="./js/update_dragon.js"></script>
+        <script src="./js/dragons/update_dragon.js"></script>
 
         <!-- delete dragon obsolete now -->
         {{!-- <div id="delete" style="display: none">

@@ -3,11 +3,11 @@
 // Adapted from nodejs-starterapp:
 // https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
-function deleteDragon(dragonID) {
+function deleteEnvironment(environmentID) {
   if (confirm("Are you sure you want to delete this environment?")) {
       let link = '/delete-environment-ajax/';
       let data = {
-          id: dragonID
+          id: environmentID
       };
 
       $.ajax({
@@ -17,6 +17,7 @@ function deleteDragon(dragonID) {
           contentType: "application/json; charset=utf-8",
           success: function (result) {
               deleteRow(environmentID);
+              alert("Environment deleted successfully");
           }
       });
   }

@@ -4,6 +4,11 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    line-height: 1.5;
+}
+
+input, button, textarea, select {
+    font: inherit;
 }
 
 .navbar {
@@ -69,7 +74,7 @@ h1 {
     /* This will affect inline or inline-block elements like text and buttons */
 }
 
-.new-dragon-btn {
+.new-btn {
     background-color: green;
     color: #fff;
     border: none;
@@ -81,7 +86,7 @@ h1 {
     display: block;
 }
 
-.edit-dragon-btn {
+.edit-btn {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -92,7 +97,7 @@ h1 {
     margin: 0 auto;
 }
 
-.delete-dragon-btn {
+.delete-btn {
     background-color: red;
     color: #fff;
     border: none;
@@ -154,26 +159,27 @@ input[type="button"] {
     color: white;
     font-size: 18px;
 }
+
 .btn-cancel:hover {
     background-color: rgb(121, 0, 0) !important;
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-button{
+button {
     font-size: 18px;
 }
 
 button:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 input[type="submit"]:hover,
 input[type="button"]:hover {
     background-color: #0056b3;
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .error-message {
