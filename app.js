@@ -9,9 +9,14 @@
 var express = require('express');   // We are using the express library for the web server
 var app = express();            // We need to instantiate an express object to interact with the server in our code
 var path = require('path');
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+const compression = require('compression');
+app.use(express.json({ limit: '1000mb' }));
+app.use(express.urlencoded({
+    limit: '1000mb',
+    extended: true
+  }));
 app.use(express.static('public'))
+app.use(compression());
 PORT = 39006;                 // Set a port number at the top so it's easy to change in the future
 const { engine } = require('express-handlebars');
 var exphbs = require('express-handlebars');     // Import express-handlebars
@@ -19,9 +24,13 @@ app.engine('.hbs', engine({ extname: ".hbs" }));  // Create an instance of the h
 app.set('view engine', '.hbs');                 // Tell express to use the handlebars engine whenever it encounters a *.hbs file.
 app.use(express.static('public'));
 
-app.set('server.timeout', 15000);
+
+var server = app.listen();
+server.setTimeout(500000);
+
 
 var db = require('./database/db-connector')
+
 
 /*
     ROUTES
@@ -142,7 +151,6 @@ app.get('/dragons/:id', function (req, res) {
             console.error('Error fetching dragon details:', error);
             return res.sendStatus(500); // Internal Server Error
         }
-
         // Query will return one row since dragon_id is unique
         if (results.length > 0) {
             res.json(results[0]);
@@ -245,7 +253,7 @@ app.put('/put-dragon-ajax', function (req, res) {
     });
 });
 
-app.delete('/delete-dragon-ajax/', function (req, res, next) {
+app.delete('/delete-dragon-ajax/', function (req, res) {
     let data = req.body;
     let dragonID = parseInt(data.id);
     let deleteDragonsAbilities = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
