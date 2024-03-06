@@ -102,6 +102,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
             document.getElementById('input-lore').value = data.dragon_lore;
 
+
              // Abilities Select
             let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
             abilitiesArray.forEach(ability => {
@@ -256,7 +257,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         min="0"
                         name="number_of_people_killed" required><br>
                     <label>Lore:</label> <textarea id="dragon_lore"
-                        name="dragon_lore" rows="1" cols="20"
+                        name="dragon_lore" rows="5" cols="5"
                         required></textarea>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
@@ -337,7 +338,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         name="number_of_people_killed" required>
                     <br>
                     <label>Lore:</label> <textarea id="input-lore"
-                        name="dragon_lore" rows="10" cols="100"
+                        name="dragon_lore" rows="5" cols="5"
                         required></textarea>
                     <br>
                 </fieldset>

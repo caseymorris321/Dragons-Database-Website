@@ -17,12 +17,20 @@ const { engine } = require('express-handlebars');
 var exphbs = require('express-handlebars');     // Import express-handlebars
 app.engine('.hbs', engine({ extname: ".hbs" }));  // Create an instance of the handlebars engine to process templates
 app.set('view engine', '.hbs');                 // Tell express to use the handlebars engine whenever it encounters a *.hbs file.
-app.use(express.static(path.join(__dirname)));
+app.use(express.static('public'));
+
+app.set('server.timeout', 15000);
+
 var db = require('./database/db-connector')
 
 /*
     ROUTES
 */
+
+app.get('/', function (req, res) {
+    res.render('index');
+})
+
 // Route to display dragons
 app.get('/dragons', function (req, res) {
     // Declare Query 1
@@ -46,8 +54,9 @@ app.get('/dragons', function (req, res) {
             console.error('Error fetching dragons:', error);
             return res.sendStatus(500);
         }
-
+        
         // Display the results correctly
+    
         const modifiedResults = dragonsResults.map(dragon => ({
             ID: dragon.dragon_id,
             Name: dragon.dragon_name,
@@ -173,10 +182,7 @@ app.post('/dragons/add', function (req, res) {
                 // Redirect or send a success response after all operations are successful
                 res.redirect('/dragons');
             });
-        } else {
-            // Redirect or send a success response if there are no abilities to add
-            res.redirect('/dragons');
-        }
+        } 
     });
 });
 
@@ -280,6 +286,7 @@ app.get('/types', function (req, res) {
             console.error('Error fetching types:', error);
             return res.sendStatus(500);
         }
+        
         const modifiedResults = typesResults.map(type => ({
             ID: type.type_id,
             Name: type.type_name,
