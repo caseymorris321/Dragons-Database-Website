@@ -43,18 +43,18 @@ updateDragonForm.addEventListener("submit", function (e) {
     //     return;
     // }
 
-    // let selectedOptions = inputAbilities.selectedOptions;
-    // let selectedAbilities = []; // Initialize the array to store selected abilities
+    let selectedOptions = inputAbilities.selectedOptions;
+    let selectedAbilities = []; // Initialize the array to store selected abilities
 
-    // // Loop through the selected options and add their values to the selectedAbilities array
-    // for (let option of selectedOptions) {
-    //     selectedAbilities.push(option.value);
-    // }
+    // Loop through the selected options and add their values to the selectedAbilities array
+    for (let option of selectedOptions) {
+        selectedAbilities.push(option.value);
+    }
 
-    var checkedAbilities = [];
-    document.querySelectorAll('input[name="abilities[]"]:checked').forEach(function(checkbox) {
-        checkedAbilities.push(checkbox.value);
-    });
+    // var checkedAbilities = [];
+    // document.querySelectorAll('input[name="abilities[]"]:checked').forEach(function(checkbox) {
+    //     checkedAbilities.push(checkbox.value);
+    // });
 
     // Put our data we want to send in a javascript object
     let data = {
@@ -67,7 +67,7 @@ updateDragonForm.addEventListener("submit", function (e) {
         personality: personalityValue,
         alignment: alignmentValue,
         environment: environmentValue,
-        abilities: checkedAbilities,
+        abilities: selectedAbilities,
         number_of_people_killed: number_of_people_killedValue,
         lore: loreValue
     }
@@ -119,7 +119,7 @@ function updateRow(data, dragonID) {
             td.innerHTML = parsedData[6].personality;
             td.innerHTML = parsedData[7].alignment;
             td.innerHTML = parsedData[8].environment;
-            td.innerHTML = parsedData[9].abiltiies;
+            td.innerHTML = parsedData[9].abilities;
             td.innerHTML = parsedData[10].number_of_people_killed;
             td.innerHTML = parsedData[11].lore;
         }

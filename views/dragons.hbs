@@ -62,17 +62,13 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         url: `/dragons/${dragonId}`, // Adjust this URL to match your endpoint
         type: 'GET',
         success: function(data) {
-            document.getElementById('update-dragon-id').value = data.dragon_id;
-            document.getElementById('input-name').value = data.dragon_name;
-            document.getElementById('input-height').value = data.dragon_height;
-            document.getElementById('input-weight').value = data.dragon_weight;
-            document.getElementById('input-age').value = data.dragon_age;
-            document.getElementById('input-personality').value = data.dragon_personality;
-            document.getElementById('input-alignment').value = data.dragon_alignment;
-            document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
-            document.getElementById('input-lore').value = data.dragon_lore;
+   // Clear previous Abilities
+            let abilitiesSelect = document.getElementById('input-abilities');
+            Array.from(abilitiesSelect.options).forEach(option => {
+                option.selected = false;
+            });
 
-            // Types Dropdown
+                       // Types Dropdown
             let typeSelect = document.getElementById('input-type');
             if (!data.type) {
                 Array.from(typeSelect.options).forEach(option => {
@@ -95,8 +91,29 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     option.selected = true;
                 }
             });
+
+            document.getElementById('update-dragon-id').value = data.dragon_id;
+            document.getElementById('input-name').value = data.dragon_name;
+            document.getElementById('input-height').value = data.dragon_height;
+            document.getElementById('input-weight').value = data.dragon_weight;
+            document.getElementById('input-age').value = data.dragon_age;
+            document.getElementById('input-personality').value = data.dragon_personality;
+            document.getElementById('input-alignment').value = data.dragon_alignment;
+            document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
+            document.getElementById('input-lore').value = data.dragon_lore;
+
+             // Abilities Select
+            let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
+            abilitiesArray.forEach(ability => {
+                for (let option of abilitiesSelect.options) {
+                    if (option.text.trim() === ability.trim()) {
+                        option.selected = true;
+                        break; // Found the selected Ability
+                    }
+                }
+            });
             
-            // Abilities checkbox
+
         
             
            
@@ -227,11 +244,13 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Abilities:</label><small> Hold down the Ctrl
                         (windows) or Command (Mac) button to select multiple
                         options.</small><br>
-                    {{#each abilities}}
-                    <input type="checkbox" id="ability-{{this.ability_id}}"
-                        name="abilities[]" value="{{this.ability_id}}">
-                    {{this.ability_name}}<br>
-                    {{/each}}
+                        <select multiple
+                        name="abilities[]">
+                        {{#each abilities}}
+                        <option
+                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        {{/each}}
+                    </select>
                     <br>
                     <label>Number of People Killed:</label> <input type="number"
                         min="0"
@@ -303,11 +322,14 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Abilities:</label><small> Hold down the Ctrl
                         (windows) or Command (Mac) button to select multiple
                         options.</small><br>
-                    {{#each abilities}}
-                    <input type="checkbox" id="ability-{{this.ability_id}}"
-                        name="abilities[]" value="{{this.ability_id}}">
-                    {{this.ability_name}}<br>
-                    {{/each}}
+                    <select multiple id="input-abilities"
+                        name="abilities[]">
+                        <!-- Dynamically populate environments -->
+                        {{#each abilities}}
+                        <option
+                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        {{/each}}
+                    </select>
                     <br>
                     <label>Number of People Killed:</label> <input type="number"
                         min="0"
