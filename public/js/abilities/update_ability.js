@@ -23,7 +23,7 @@ updateAbilityForm.addEventListener("submit", function (e) {
     
     // Put our data we want to send in a javascript object
     let data = {
-        environment_id: abilityId,
+        ability_id: abilityId,
         name: nameValue,
         proficiency: proficiencyValue
     }
