@@ -41,7 +41,7 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             alert("Environment updated successfully");
-            updateRow(xttp.response, data)
+            updateRow(xhttp.response, data)
             window.location.reload();
 
         }

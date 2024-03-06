@@ -83,17 +83,18 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
         <nav class="navbar">
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
                 <li><a href="types">Types</a></li>
-                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
 
         <!-- browse -->
         <div id="browse" style="display: block">
-            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            --}}
             <p><strong>Browse Dragon Types</strong></p>
             <button class="new-btn"
                 onclick="newType()">New Type</button>
@@ -113,9 +114,9 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <tr data-value={{this.ID}}>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
-                        <td align="center">{{this.Average_Height}}</td>
-                        <td align="center">{{this.Average_Weight}}</td>
-                        <td align="center">{{this.Average_Age}}</td>
+                        <td align="center">{{this.Average_Height}} ft</td>
+                        <td align="center">{{this.Average_Weight}} lbs</td>
+                        <td align="center">{{this.Average_Age}} yrs</td>
                         <td align="center">{{this.Total_Number}}</td>
                         <td align="center">
                             <button class="edit-btn"
@@ -152,7 +153,8 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">
-                <input class="btn" id="submitTypeForm" type="submit" value="Add Type">
+                <input class="btn" id="submitTypeForm" type="submit"
+                    value="Add Type">
             </form>
         </div>
         <script src="./js/types/add_type.js"></script>

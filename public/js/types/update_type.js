@@ -55,7 +55,7 @@ function updateRow(data, typeID) {
             row.cells[3].innerText = type_average_weight;
             row.cells[4].innerText = type_average_age;
             row.cells[5].innerText = total_number;
-            break; // Exit the loop once the matching row is updated
+             // Exit the loop once the matching row is updated
         }
     }
 }

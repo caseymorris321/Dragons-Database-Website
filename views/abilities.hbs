@@ -1,12 +1,17 @@
+<!-- Citation for the following code:
+Date: 12/22/2024 & 12/28/2024
+Adapted from two sources
+1. people.html starter code:
+Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
+2. nodejs-starterapp:
+https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 <!DOCTYPE html>
 <html>
-<!-- Citation for the following code:
-Date: 12/22/2024
-Adapted from people.html starter code:
-Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 -->
     <head>
         <title>Dragon Abilities</title>
         <link href="/css/style.css" rel="stylesheet" type="text/css">
+        <script
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script language="JavaScript">
         function showform(dowhat) {
             /*
@@ -49,6 +54,22 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
         function deleteAbility(pid) { showform('delete'); }
         function browseAbilities() { showform('browse'); }
         function showAll() { showform('all'); }
+        function populateUpdateForm(abilityId) {
+    $.ajax({
+        url: `/abilities/${abilityId}`,
+        type: 'GET',
+        success: function(data) {
+            document.getElementById('update-ability-id').value = data.ability_id;
+            document.getElementById('input-ability-name').value = data.ability_name;
+            document.getElementById('input-ability-proficiency').value = data.ability_proficiency;
+        },
+        error: function(error) {
+            console.log('Error fetching ability details:', error);
+        }
+    });
+    document.getElementById('update').style.display = 'block'; 
+}
+
     </script>
 
     </head>
@@ -59,94 +80,93 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
 
         <nav class="navbar">
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
-                <li><a href="types.html">Types</a></li>
-                <li><a href="abilities.html">Abilities</a></li>
-                <li><a href="environments.html">Environments</a></li>
+                <li><a href="types">Types</a></li>
+                <li><a href="abilities">Abilities</a></li>
+                <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
 
         <!-- browse -->
         <div id="browse" style="display: block">
-            <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            --}}
             <p><strong>Browse Dragon Abilities</strong></p>
-            <table>
+            <button class="new-btn"
+                onclick="newAbility()">New Ability</button>
+            <table id="abilities-table">
                 <thead>
                     <tr>
-                        <th><a href="#" onClick="newAbility()">New</a></th>
-                        <td></td>
-                        <th>Ability ID</th>
-                        <th>Name</th>
-                        <th>Proficiency</th>
+                        {{#each data.[0]}}
+                        <th>{{@key}}</th>
+                        {{/each}}
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateAbility('this.abilityID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteAbility('this.abilityID')">Delete</a></td>
-                        <td>1</td>
-                        <td>Blue Flame</td>
-                        <td>Challenger</td>
+                    {{#each data}}
+                    <tr data-value={{this.ID}}>
+                        <td align="center">{{this.ID}}</td>
+                        <td align="center">{{this.Name}}</td>
+                        <td align="center">{{this.Proficiency}}</td>
+                        <td align="center">
+                            <button class="edit-btn"
+                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Proficiency}}')">Edit
+                                Ability</button>
+                        </td>
+                        <td align="center">
+                            <button class="delete-btn"
+                                onclick="deleteAbility('{{this.ID}}')">Delete
+                                Ability</button>
+                        </td>
                     </tr>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateAbility('this.abilityID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteAbility('this.abilityID')">Delete</a></td>
-                        <td>2</td>
-                        <td>Ice Manipulation</td>
-                        <td>Expert</td>
-                    </tr>
-                    <tr align="center">
-                        <td><a href="#"
-                                onClick="updateAbility('this.abilityID')">Edit</a></td>
-                        <td><a href="#"
-                                onClick="deleteAbility('this.abilityID')">Delete</a></td>
-                        <td>3</td>
-                        <td>Invisibility</td>
-                        <td>Intermediate</td>
-                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
-        <p>&nbsp;</p>
+        <script src="./js/abilities/delete_ability.js" defer></script>
 
         <!-- add new dragon ability -->
         <div id="insert" style="display: none;">
-            <form method="POST" id="addAbility">
+            <form method="POST" id="add-ability-form" action="/abilities/add">
                 <legend><strong>Add New Ability</strong></legend>
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
-                        name="ability_name"><br>
+                        name="ability_name" required><br>
                     <label>Proficiency:</label> <input type="text"
-                        name="ability_proficiency"><br>
+                        name="ability_proficiency" required><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseAbilities()">
-                <input type="submit" value="Add Ability">
+                <input class="btn" type="submit" id="submitAbilityForm"
+                    value="Add Ability">
             </form>
         </div>
+        <script src="./js/abilities/add_ability.js" defer></script>
 
         <!-- update ability -->
         <div id="update" style="display: none;">
-            <form method="POST" id="updateAbility">
+            <form id="update-ability-form-ajax">
                 <legend><strong>Update Ability</strong></legend>
                 <fieldset class="fields">
                     <label>Ability ID:</label> <input type="text"
-                        name="ability_id" value="1" readonly><br>
-                    <label>Name:</label> <input type="text" name="ability_name"
-                        value="Blue Flame"><br>
+                        id="update-ability-id"
+                        name="ability_id" readonly><br>
+                    <label>Name:</label> <input type="text"
+                        id="input-ability-name" name="ability_name"
+                        required><br>
                     <label>Proficiency:</label> <input type="text"
-                        name="ability_proficiency" value="Challenger"><br>
+                        id="input-ability-proficiency"
+                        name="ability_proficiency" required><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseAbilities()">
                 <input class="btn" type="submit" value="Save Ability">
             </form>
         </div>
+        <script src="./js/abilities/update_ability.js" defer></script>
 
         <!-- delete ability -->
         <div id="delete" style="display: none;">

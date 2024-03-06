@@ -78,17 +78,18 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
 
         <nav class="navbar">
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
                 <li><a href="types">Types</a></li>
-                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
 
         <!-- browse -->
         <div id="browse" style="display: block">
-            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p> --}}
+            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
+            --}}
             <p><strong>Browse Dragon Environments</strong></p>
             <button class="new-btn"
                 onclick="newEnvironment()">New Environment</button>
@@ -109,7 +110,6 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                         <td>{{this.Name}}</td>
                         <td>{{this.Terrain}}</td>
                         <td>{{this.Climate}}</td>
-                        <!-- Display additional data here if necessary -->
                         <td align="center">
                             <button class="edit-btn"
                                 onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Terrain}}', '{{this.Climate}}')">Edit
@@ -129,7 +129,8 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
 
         <!-- add new environment -->
         <div id="insert" style="display: none;">
-            <form method="POST" id="add-environment-form" action="/environments/add">
+            <form method="POST" id="add-environment-form"
+                action="/environments/add">
                 <legend><strong>Add New Environment</strong></legend>
                 <fieldset>
                     <label>Name:</label> <input type="text"
@@ -141,7 +142,8 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseEnvironments()">
-                <input class="btn" id="submitEnvironmentForm" type="submit" value="Add Environment">
+                <input class="btn" id="submitEnvironmentForm" type="submit"
+                    value="Add Environment">
             </form>
         </div>
         <script src="./js/environments/add_environment.js"></script>
@@ -153,12 +155,16 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                 <legend><strong>Update Environment</strong></legend>
                 <fieldset>
                     <label>Environment ID:</label> <input type="text"
-                        name="environment_id" id="update-environment-id"  readonly><br>
-                    <label>Name:</label> <input type="text" id="input-environment-name"
+                        name="environment_id" id="update-environment-id"
+                        readonly><br>
+                    <label>Name:</label> <input type="text"
+                        id="input-environment-name"
                         name="environment_name" required><br>
-                    <label>Terrain:</label> <input type="text" id="input-environment-terrain"
+                    <label>Terrain:</label> <input type="text"
+                        id="input-environment-terrain"
                         name="environment_terrain" required><br>
-                    <label>Climate:</label> <input type="text" id="input-environment-climate"
+                    <label>Climate:</label> <input type="text"
+                        id="input-environment-climate"
                         name="environment_climate" required><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
@@ -169,7 +175,6 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
         <script src="./js/environments/update_environment.js"></script>
 
         <!-- delete environment -->
-
         <div id="delete" style="display: none;">
             <form method="POST" id="deleteEnvironment">
                 <legend><strong>Delete Environment</strong></legend>

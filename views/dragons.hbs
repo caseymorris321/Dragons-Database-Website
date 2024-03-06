@@ -11,7 +11,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         <title>Dragons</title>
         <link href="/css/style.css" rel="stylesheet" type="text/css">
         <script
-            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" defer></script>
 
         <script language="JavaScript">
     function showform(dowhat) {
@@ -23,38 +23,38 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'block';
             document.getElementById('update').style.display = 'none';
-            // document.getElementById('delete').style.display = 'none';
+            document.getElementById('delete').style.display = 'none';
         }
         else if (dowhat == 'update') {
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'block';
-            // document.getElementById('delete').style.display = 'none';
+            document.getElementById('delete').style.display = 'none';
         }
         else if (dowhat == 'delete') {
             document.getElementById('browse').style.display = 'none';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'none';
-           // document.getElementById('delete').style.display = 'block';
+           document.getElementById('delete').style.display = 'block';
         }
         else if (dowhat == 'all') {
             document.getElementById('browse').style.display = 'block';
             document.getElementById('insert').style.display = 'block';
             document.getElementById('update').style.display = 'block';
-           // document.getElementById('delete').style.display = 'block';
+           document.getElementById('delete').style.display = 'block';
         }
         else { //by default display browse
             document.getElementById('browse').style.display = 'block';
             document.getElementById('insert').style.display = 'none';
             document.getElementById('update').style.display = 'none';
-           // document.getElementById('delete').style.display = 'none';
+           document.getElementById('delete').style.display = 'none';
         }
     }
 
 
     function newDragon() { showform('insert'); }
     function updateDragon(pid) { showform('update'); }
-  //  function deleteDragon(pid) { showform('delete'); }
+    function deleteDragon(pid) { showform('delete'); }
     function browseDragons() { showform('browse'); }
     function showAll() { showform('all'); }
     function populateUpdateForm(dragonId) {
@@ -62,17 +62,17 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         url: `/dragons/${dragonId}`, // Adjust this URL to match your endpoint
         type: 'GET',
         success: function(data) {
-   // Clear previous Abilities
+            // Clear previous Abilities
             let abilitiesSelect = document.getElementById('input-abilities');
             Array.from(abilitiesSelect.options).forEach(option => {
                 option.selected = false;
             });
 
-                       // Types Dropdown
+            // Types Dropdown
             let typeSelect = document.getElementById('input-type');
             if (!data.type) {
                 Array.from(typeSelect.options).forEach(option => {
-                    if (option.value === "") { // Assuming "None" is a placeholder value for no type
+                    if (option.value === "") { // "None" is a placeholder value for no type or NULL
                         option.selected = true;
                     }
                 });
@@ -102,22 +102,17 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             document.getElementById('input-number_of_people_killed').value = data.number_of_people_killed;
             document.getElementById('input-lore').value = data.dragon_lore;
 
-
              // Abilities Select
-            let abilitiesArray = data.Abilities.split(', '); // Abilities are separated by ", "
+            let abilitiesArray = data.Abilities.split(', '); 
             abilitiesArray.forEach(ability => {
                 for (let option of abilitiesSelect.options) {
                     if (option.text.trim() === ability.trim()) {
                         option.selected = true;
-                        break; // Found the selected Ability
+                        break;
                     }
                 }
-            });
-            
-
-        
-            
-           
+            });  
+            refreshFauxCheckboxesForSelect('input-abilities'); 
         },
         error: function(error) {
             console.log('Error fetching dragon details:', error);
@@ -136,10 +131,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
         <nav class="navbar">
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="dragons">Dragons</a></li>
                 <li><a href="types">Types</a></li>
-                <li><a href="abilities.html">Abilities</a></li>
+                <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
             </ul>
         </nav>
@@ -193,7 +188,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 </tbody>
             </table>
         </div>
-        <script src="./js/dragons/delete_dragon.js"></script>
+        <script src="./js/dragons/delete_dragon.js" defer></script>
 
         <!--add new dragon-->
         <div id="insert" style="display: none">
@@ -242,11 +237,9 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                             value="{{this.environment_id}}">{{this.environment_name}}</option>
                         {{/each}}
                     </select><br>
-                    <label>Abilities:</label><small> Hold down the Ctrl
-                        (windows) or Command (Mac) button to select multiple
-                        options.</small><br>
-                        <select multiple
-                        name="abilities[]">
+                    <label>Abilities:</label><small>Multiple options can be searched for and selected.</small><br>
+                    <select multiple
+                       id="add-input-abilities" name="abilities[]">
                         {{#each abilities}}
                         <option
                             value="{{this.ability_id}}">{{this.ability_name}}</option>
@@ -267,7 +260,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             </form>
         </div>
 
-        <script src="./js/dragons/add_dragon.js"></script>
+        <script src="./js/dragons/add_dragon.js" defer></script>
 
         <!-- update dragon -->
         <div id="update" style="display: none">
@@ -313,19 +306,15 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <br>
                     <label>Environment:</label> <select id="input-environment"
                         name="environment_id">
-                        <!-- Dynamically populate environments -->
                         {{#each environments}}
                         <option
                             value="{{this.environment_id}}">{{this.environment_name}}</option>
                         {{/each}}
                     </select>
                     <br>
-                    <label>Abilities:</label><small> Hold down the Ctrl
-                        (windows) or Command (Mac) button to select multiple
-                        options.</small><br>
-                    <select multiple id="input-abilities"
+                    <label>Abilities:</label><small> Multiple options can be searched for and selected.</small><br>
+                    <select multiple id="input-abilities" 
                         name="abilities[]">
-                        <!-- Dynamically populate environments -->
                         {{#each abilities}}
                         <option
                             value="{{this.ability_id}}">{{this.ability_name}}</option>
@@ -347,10 +336,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <input class="btn" type="submit" value="Save Dragon">
             </form>
         </div>
-        <script src="./js/dragons/update_dragon.js"></script>
+        <script src="./js/dragons/update_dragon.js" defer></script>
 
         <!-- delete dragon obsolete now -->
-        {{!-- <div id="delete" style="display: none">
+        <div id="delete" style="display: none">
             <form id="delete-dragon-ajax">
                 <legend><strong>Delete Dragon</strong></legend>
                 <fieldset class="fields">
@@ -365,7 +354,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <input class="btn" id="deleteDragonButton" type="submit"
                     value="Delete Dragon">
             </form>
-        </div> --}}
-    </body>
+        </div>
 
+        <script src="./js/dragons/dragon_lore_ellipsis.js" defer></script>
+        <script src="./js/dragons/require_dragon_abilities.js" defer></script>
+        <script src="./js/dragons/dragon_abilities_select.js" defer></script>
+    </body>
 </html>

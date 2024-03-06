@@ -38,7 +38,7 @@ updateAbilityForm.addEventListener("submit", function (e) {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
             alert("Ability updated successfully");
-            updateRow(xttp.response, data)
+            updateRow(xhttp.response, data)
             window.location.reload();
 
         }
