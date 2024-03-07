@@ -84,10 +84,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         <nav class="navbar">
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="dragons">Dragons</a></li>
-                <li><a href="types">Types</a></li>
                 <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
+                <li><a href="types">Types</a></li>
+                <li><a href="dragons">Dragons</a></li>
             </ul>
         </nav>
 
@@ -104,8 +104,8 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         {{#each data.[0]}}
                         <th>{{@key}}</th>
                         {{/each}}
-                        <th>edit</th>
-                        <th>delete</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
 
@@ -141,15 +141,19 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <legend><strong>Add New Type</strong></legend>
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
-                        name="type_name" required><br>
-                    <label>Average Height (ft):</label> <input type="number"
-                        name="type_average_height" required><br>
+                        name="type_name"><br>
+                    <p><strong> The other values are calculated automatically
+                            when you add a new <a href="dragons">Dragon</a>
+                        </strong></p>
+                    {{!-- <label>Average Height (ft):</label> <input
+                        type="number"
+                        name="type_average_height" readonly><br>
                     <label>Average Weight (lbs):</label> <input type="number"
-                        name="type_average_weight" required><br>
+                        name="type_average_weight" readonly><br>
                     <label>Average Age (yrs):</label> <input type="number"
-                        name="type_average_age" required><br>
+                        name="type_average_age" readonly><br>
                     <label>Total Number:</label> <input type="number"
-                        name="total_number" required><br>
+                        name="total_number" readonly><br> --}}
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">
@@ -169,18 +173,29 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         readonly><br>
                     <label>Name:</label> <input type="text" id="input-type-name"
                         name="type_name" required><br>
+                    <p><strong>Add a new <a href="dragons">Dragon</a> with this Type and the
+                            fields below will be calculated
+                            automatically.</strong></p>
                     <label>Average Height (ft):</label> <input type="number"
                         id="input-type-average-height"
-                        name="type_average_height" required><br>
+                        name="type_average_height"
+                        style="background-color: #e9e9e9"
+                        readonly><br>
                     <label>Average Weight (lbs):</label> <input type="number"
                         id="input-type-average-weight"
-                        name="type_average_weight" required><br>
+                        name="type_average_weight"
+                        style="background-color: #e9e9e9"
+                        readonly><br>
                     <label>Average Age (years):</label> <input type="number"
                         id="input-type-average-age"
-                        name="type_average_age" required><br>
+                        name="type_average_age"
+                        style="background-color: #e9e9e9"
+                        readonly><br>
                     <label>Total Number:</label> <input type="number"
                         id="input-total-number"
-                        name="total_number" required><br>
+                        name="total_number"
+                        style="background-color: #e9e9e9"
+                        readonly><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseTypes()">

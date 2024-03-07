@@ -20,6 +20,7 @@ PORT = 39006;                 // Set a port number at the top so it's easy to ch
 // <!-- Citation for the following code:
 // Date: 3/6/2024
 // This code is an attempt to fix "GET net::ERR_CONTENT_LENGTH_MISMATCH"
+// It may not be necessary.
 // From https://stackoverflow.com/questions/56450228/getting-neterr-incomplete-chunked-encoding-200-when-consuming-event-stream-usi -->
 const shouldCompress = (req, res) => {
     if (req.headers["x-no-compression"]) {
@@ -31,8 +32,6 @@ const shouldCompress = (req, res) => {
     return compression.filter(req, res);
 };
 app.use(compression({ filter: shouldCompress }));
-
-
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -259,7 +258,7 @@ app.put('/put-dragon-ajax', function (req, res) {
     ], function (error) {
         if (error) {
             console.error('Error updating dragon:', error);
-            return res.sendStatus(500); // Internal Server Error
+            return res.sendStatus(500); 
         }
         // Handle Dragon_Abilities update
         let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
@@ -267,7 +266,7 @@ app.put('/put-dragon-ajax', function (req, res) {
         db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
             if (deleteError) {
                 console.error('Error deleting existing abilities:', deleteError);
-                return res.sendStatus(500); // Internal Server Error
+                return res.sendStatus(500); 
             }
 
             // Insert new abilities for the dragon
@@ -321,7 +320,21 @@ app.delete('/delete-dragon-ajax/', function (req, res) {
 // <!-- Get all Types -->
 app.get('/types', function (req, res) {
     // Query to get Types
-    let query = "SELECT * FROM Types;";
+    let query = `
+    SELECT 
+        t.type_id, 
+        t.type_name, 
+        AVG(d.dragon_height) AS type_average_height, 
+        AVG(d.dragon_weight) AS type_average_weight, 
+        AVG(d.dragon_age) AS type_average_age, 
+        COUNT(d.dragon_id) AS total_number
+    FROM 
+        Types t
+    LEFT JOIN 
+        Dragons d ON t.type_id = d.type_id
+    GROUP BY 
+        t.type_id;
+    `;
 
     // Execute Query
     db.pool.query(query, function (error, typesResults) {
@@ -332,10 +345,10 @@ app.get('/types', function (req, res) {
         const modifiedResults = typesResults.map(type => ({
             ID: type.type_id,
             Name: type.type_name,
-            Average_Height: type.type_average_height,
-            Average_Weight: type.type_average_weight,
-            Average_Age: type.type_average_age,
-            Total_Number: type.total_number
+            Average_Height: type.type_average_height || 0,
+            Average_Weight: type.type_average_weight || 0,
+            Average_Age: type.type_average_age || 0,
+            Total_Number: type.total_number || 0
         }));
         res.render('types', { data: modifiedResults });
     });
@@ -347,9 +360,21 @@ app.get('/types/:id', function (req, res) {
 
     // Query to get Type
     let query = `
-    SELECT type_id, type_name, type_average_height, type_average_weight, type_average_age, total_number
-    FROM Types
-    WHERE type_id = ?`;
+    SELECT 
+        t.type_id,
+        t.type_name,
+        COALESCE(AVG(d.dragon_height), 0) AS type_average_height, 
+        COALESCE(AVG(d.dragon_weight), 0) AS type_average_weight, 
+        COALESCE(AVG(d.dragon_age), 0) AS type_average_age, 
+        COUNT(d.dragon_id) AS total_number
+    FROM 
+        Types t
+    LEFT JOIN 
+        Dragons d ON t.type_id = d.type_id
+    WHERE 
+        t.type_id = ?
+    GROUP BY 
+        t.type_id, t.type_name`;
 
     // Execute the query
     db.pool.query(query, [typeId], function (error, results) {
@@ -369,20 +394,27 @@ app.get('/types/:id', function (req, res) {
 
 // <!-- Add a Type -->
 app.post('/types/add', function (req, res) {
-    const { type_name, type_average_height, type_average_weight, type_average_age, total_number } = req.body;
+    const { 
+        type_name, 
+        type_average_height, 
+        type_average_weight, 
+        type_average_age, 
+        total_number 
+    } = req.body;
 
     // Query to add Type
     const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number) VALUES (?, ?, ?, ?, ?)`;
 
-    // Execute query to add Type
+    // Execute query
     db.pool.query(query, [type_name, type_average_height, type_average_weight, type_average_age, total_number], function (error, results) {
         if (error) {
             console.error('Error adding new type:', error);
             return res.sendStatus(500); 
         }
-        res.redirect('/types');
+        res.redirect('/types'); 
     });
 });
+
 
 // <!-- Update a Type -->
 app.put('/put-type-ajax', function (req, res) {
@@ -630,5 +662,4 @@ const server = app.listen(PORT, function () {            // This is the basic sy
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });
 
-// Might help with "GET net::ERR_CONTENT_LENGTH_MISMATCH"
-server.keepAliveTimeout = 0;
+// server.keepAliveTimeout = 0;

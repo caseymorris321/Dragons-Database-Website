@@ -79,10 +79,10 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
         <nav class="navbar">
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="dragons">Dragons</a></li>
-                <li><a href="types">Types</a></li>
                 <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
+                <li><a href="types">Types</a></li>
+                <li><a href="dragons">Dragons</a></li>
             </ul>
         </nav>
 
@@ -99,17 +99,17 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                         {{#each data.[0]}}
                         <th>{{@key}}</th>
                         {{/each}}
-                        <th>edit</th>
-                        <th>delete</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each data}}
                     <tr data-value={{this.ID}}>
-                        <td>{{this.ID}}</td>
-                        <td>{{this.Name}}</td>
-                        <td>{{this.Terrain}}</td>
-                        <td>{{this.Climate}}</td>
+                        <td align="center">{{this.ID}}</td>
+                        <td align="center">{{this.Name}}</td>
+                        <td align="center">{{this.Terrain}}</td>
+                        <td align="center">{{this.Climate}}</td>
                         <td align="center">
                             <button class="edit-btn"
                                 onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Terrain}}', '{{this.Climate}}')">Edit

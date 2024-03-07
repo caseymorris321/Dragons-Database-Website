@@ -81,10 +81,10 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         <nav class="navbar">
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="dragons">Dragons</a></li>
-                <li><a href="types">Types</a></li>
                 <li><a href="abilities">Abilities</a></li>
                 <li><a href="environments">Environments</a></li>
+                <li><a href="types">Types</a></li>
+                <li><a href="dragons">Dragons</a></li>
             </ul>
         </nav>
 
@@ -135,8 +135,12 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
                         name="ability_name" required><br>
-                    <label>Proficiency:</label> <input type="text"
-                        name="ability_proficiency" required><br>
+                    <label>Proficiency:</label> <select
+                        name="ability_proficiency" required>
+                        <option value="Apprentice">Apprentice</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Master">Master</option>
+                    </select>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseAbilities()">
@@ -157,9 +161,13 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                     <label>Name:</label> <input type="text"
                         id="input-ability-name" name="ability_name"
                         required><br>
-                    <label>Proficiency:</label> <input type="text"
-                        id="input-ability-proficiency"
-                        name="ability_proficiency" required><br>
+                    <label>Proficiency:</label> 
+                    <select id="input-ability-proficiency"
+                        name="ability_proficiency">
+                        <option>Apprentice</option>
+                        <option>Intermediate</option>
+                        <option>Master</option>
+                    </select><br>
                 </fieldset>
                 <input class="btn btn-cancel" type="button" value="Cancel"
                     onClick="browseAbilities()">
