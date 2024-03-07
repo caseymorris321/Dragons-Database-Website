@@ -8,8 +8,7 @@ let updateDragonForm = document.getElementById('update-dragon-form-ajax');
 // Modify the objects we need
 updateDragonForm.addEventListener("submit", function (e) {
     e.preventDefault()
-    // Prevent the form from submitting
-    // e.preventDefault()
+
 
     // Get form fields we need to get data from
     let dragonId = document.querySelector("input[name='dragon_id']").value;

@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Assuming 'input-abilities' and 'add-input-abilities' are IDs of your <select multiple> for update and add forms
     enhanceSelectMultipleWithSearchAndCheckboxes('input-abilities');
     enhanceSelectMultipleWithSearchAndCheckboxes('add-input-abilities');
 });

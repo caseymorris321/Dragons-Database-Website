@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var cells = document.querySelectorAll('#dragons-table td');
+    var cells = document.querySelectorAll('#dragons-table tbody tr td:nth-child(12)');
     cells.forEach(function (cell) {
         if (cell.scrollWidth > cell.clientWidth) {
             cell.style.cursor = 'pointer';

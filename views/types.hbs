@@ -95,7 +95,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
         <div id="browse" style="display: block">
             {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
             --}}
-            <p><strong>Browse Dragon Types</strong></p>
+            <h2><strong>Browse Dragon Types</strong></h2>
             <button class="new-btn"
                 onclick="newType()">New Type</button>
             <table id="types-table">
@@ -141,7 +141,7 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <legend><strong>Add New Type</strong></legend>
                 <fieldset class="fields">
                     <label>Name:</label> <input type="text"
-                        name="type_name"><br>
+                        name="type_name" required><br>
                     <p><strong> The other values are calculated automatically
                             when you add a new <a href="dragons">Dragon</a>
                         </strong></p>
