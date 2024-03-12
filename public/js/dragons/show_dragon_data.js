@@ -1,3 +1,10 @@
+/*
+<!-- Citation for the following code:
+Date: 12/22/2024
+showform function adapted from people.html starter code:
+Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
+populateUpdateForm is original code
+*/
 function showform(dowhat) {
     /*
     * four DIVS: browse, insert, update, delete
@@ -6,6 +13,36 @@ function showform(dowhat) {
     if (dowhat == 'insert') {
         document.getElementById('browse').style.display = 'none';
         document.getElementById('insert').style.display = 'block';
+        document.getElementById('insert-type').style.display = 'none';
+        document.getElementById('insert-environment').style.display = 'none';
+        document.getElementById('insert-ability').style.display = 'none';
+        document.getElementById('update').style.display = 'none';
+        document.getElementById('delete').style.display = 'none';
+    }
+    else if (dowhat == 'insert-type') {
+        document.getElementById('browse').style.display = 'none';
+        document.getElementById('insert').style.display = 'none';
+        document.getElementById('insert-type').style.display = 'block';
+        document.getElementById('insert-environment').style.display = 'none';
+        document.getElementById('insert-ability').style.display = 'none';
+        document.getElementById('update').style.display = 'none';
+        document.getElementById('delete').style.display = 'none';
+    }
+    else if (dowhat == 'insert-environment') {
+        document.getElementById('browse').style.display = 'none';
+        document.getElementById('insert').style.display = 'none';
+        document.getElementById('insert-type').style.display = 'none';
+        document.getElementById('insert-environment').style.display = 'block';
+        document.getElementById('insert-ability').style.display = 'none';
+        document.getElementById('update').style.display = 'none';
+        document.getElementById('delete').style.display = 'none';
+    }
+    else if (dowhat == 'insert-ability') {
+        document.getElementById('browse').style.display = 'none';
+        document.getElementById('insert').style.display = 'none';
+        document.getElementById('insert-type').style.display = 'none';
+        document.getElementById('insert-environment').style.display = 'none';
+        document.getElementById('insert-ability').style.display = 'block';
         document.getElementById('update').style.display = 'none';
         document.getElementById('delete').style.display = 'none';
     }
@@ -30,15 +67,20 @@ function showform(dowhat) {
     else { //by default display browse
         document.getElementById('browse').style.display = 'block';
         document.getElementById('insert').style.display = 'none';
+        document.getElementById('insert-type').style.display = 'none';
+        document.getElementById('insert-environment').style.display = 'none';
+        document.getElementById('insert-ability').style.display = 'none';
         document.getElementById('update').style.display = 'none';
        document.getElementById('delete').style.display = 'none';
     }
 }
 
-
 function newDragon() { showform('insert'); }
-function updateDragon(pid) { showform('update'); }
-function deleteDragon(pid) { showform('delete'); }
+function newType() {showform('insert-type'); }
+function newEnvironment() {showform('insert-environment'); }
+function newAbility() {showform('insert-ability'); }
+function updateDragon(dragonID) { showform('update'); }
+function deleteDragon(dragonID) { showform('delete'); }
 function browseDragons() { showform('browse'); }
 function showAll() { showform('all'); }
 function populateUpdateForm(dragonId) {
@@ -103,6 +145,6 @@ function populateUpdateForm(dragonId) {
     }
 })
 
-
 document.getElementById('update').style.display = 'block';
+document.getElementById('browse').style.display = 'none';
 }

@@ -16,19 +16,21 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
     let inputName = document.getElementById("input-environment-name");
     let inputTerrain = document.getElementById("input-environment-terrain");
     let inputClimate = document.getElementById("input-environment-climate");
+    let inputTotalNumberOfDragons = document.getElementById("input-total-number-of-dragons");
 
     // Get the values from the form fields
     let nameValue = inputName.value;
     let terrainValue = inputTerrain.value;
     let climateValue = inputClimate.value
-
+    let totalNumberOfDragonsValue = inputTotalNumberOfDragons.value
     
     // Put our data we want to send in a javascript object
     let data = {
         environment_id: environmentId,
         name: nameValue,
         terrain: terrainValue,
-        climate: climateValue
+        climate: climateValue,
+        totalNumberOfDragons: totalNumberOfDragonsValue
     }
     
     // Setup our AJAX request
@@ -40,9 +42,9 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
     xhttp.onreadystatechange = () => {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-            alert("Environment updated successfully");
             updateRow(xhttp.response, data)
-            window.location.reload();
+            // window.location.reload();
+            alert("Environment updated successfully");
 
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -74,6 +76,7 @@ function updateRow(data, environmentID){
             td.innerHTML = parsedData[1].name; 
             td.innerHTML = parsedData[2].terrain; 
             td.innerHTML = parsedData[3].climate; 
+            td.innerHTML = parsedData[4].totalNumberOfDragons
        }
     }
 }

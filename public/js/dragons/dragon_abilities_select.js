@@ -1,3 +1,6 @@
+/*
+// This script transforms a multiple select element into a more user-friendly version with a search functionality
+*/
 document.addEventListener('DOMContentLoaded', function () {
     enhanceSelectMultipleWithSearchAndCheckboxes('input-abilities');
     enhanceSelectMultipleWithSearchAndCheckboxes('add-input-abilities');

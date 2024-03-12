@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
-    <!-- Citation for the following code:
+<!-- Citation for the following showform function:
 Date: 12/22/2024
 Adapted from people.html starter code:
-Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 -->
-    <head>
-        <title>Dragon Environments</title>
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script
-            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script language="JavaScript">
+Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
+populateUpdateForm is original code
+-->
+
+<head>
+    <title>Dragon Environments</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script language="JavaScript">
         function showform(dowhat) {
             /*
             * four DIVS: browse, insert, update, delete
@@ -47,103 +49,131 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
             }
         }
         function newEnvironment() { showform('insert'); }
-        function updateEnvironment(pid) { showform('update'); }
-        function deleteEnvironment(pid) { showform('delete'); }
+        function updateEnvironment(environmentID) { showform('update'); }
+        function deleteEnvironment(environmentID) { showform('delete'); }
         function browseEnvironments() { showform('browse'); }
         function showAll() { showform('all'); }
         function populateUpdateForm(environmentId) {
-    $.ajax({
-        url: `/environments/${environmentId}`,
-        type: 'GET',
-        success: function(data) {
-            document.getElementById('update-environment-id').value = data.environment_id; 
-            document.getElementById('input-environment-name').value = data.environment_name;
-            document.getElementById('input-environment-terrain').value = data.environment_terrain;
-            document.getElementById('input-environment-climate').value = data.environment_climate;
-        },
-        error: function(error) {
-            console.log('Error fetching environment details:', error);
+            $.ajax({
+                url: `/environments/${environmentId}`,
+                type: 'GET',
+                success: function (data) {
+                    document.getElementById('update-environment-id').value = data.environment_id;
+                    document.getElementById('input-environment-name').value = data.environment_name;
+                    document.getElementById('input-environment-terrain').value = data.environment_terrain;
+                    document.getElementById('input-environment-climate').value = data.environment_climate;
+                    document.getElementById('input-total-number-of-dragons').value = data.total_number_of_dragons
+                },
+                error: function (error) {
+                    console.log('Error fetching environment details:', error);
+                }
+            });
+            document.getElementById('update').style.display = 'block';
+            document.getElementById('browse').style.display = 'none';
         }
-    });
-    document.getElementById('update').style.display = 'block';
-}
 
     </script>
 
-    </head>
+</head>
 
-    <body onload="browseEnvironments()">
+<body onload="browseEnvironments()">
 
-        <h1>Dragon Environments</h1>
+    <h1>Dragon Environments</h1>
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="abilities">Abilities</a></li>
-                <li><a href="environments">Environments</a></li>
-                <li><a href="types">Types</a></li>
-                <li><a href="dragons">Dragons</a></li>
-            </ul>
-        </nav>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="abilities">Abilities</a></li>
+            <li><a href="environments">Environments</a></li>
+            <li><a href="types">Types</a></li>
+            <li><a href="dragons">Dragons</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-wrapper">
 
         <!-- browse -->
         <div id="browse" style="display: block">
             {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
             --}}
-            <h2><strong>Browse Dragon Environments</strong></h2>
-            <button class="new-btn"
-                onclick="newEnvironment()">New Environment</button>
+            {{!-- <h2><strong>Browse Dragon Environments</strong></h2> --}}
+            <div class="button-container">
+
+                <div class="new-button-container">
+                    <img src="./svg/add-button.svg" class="new-btn" style="width: 65px; " onclick="newEnvironment()"
+                        data-target-form="insert" loading="lazy"></img>
+                </div>
+                <div class="toggle-btn-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggleTableData">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="table-data-label">Table Data</p>
+
+                </div>
+                <div class="main-search-box-container">
+                    <input type="text" id="searchInput" onkeyup="searchTables()" placeholder="Search.."
+                        class="main-search-box">
+                </div>
+            </div>
             <table ID="environments-table">
                 <thead>
                     <tr>
-                        {{#each data.[0]}}
+                        {{!-- {{#each data.[0]}}
                         <th>{{@key}}</th>
-                        {{/each}}
+                        {{/each}} --}}
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Terrain</th>
+                        <th>Climate</th>
+                        <th>Total Number of Dragons</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     {{#each data}}
                     <tr data-value={{this.ID}}>
+                        <div class="icon-flex">
+                            <td>
+                                <img src="./svg/edit-button.svg" class="edit-btn" style="width: 35px; height: 35px; padding-bottom:6px"
+                                    onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Terrain}}', '{{this.Climate}}', '{{this.Total_Number_of_Dragons}}')"
+                                    loading="lazy"></img>
+
+                                <img src="./svg/delete-button.svg" class="delete-btn" style="width: 35px; height: 35px; padding-bottom:8px"
+                                    onclick="deleteEnvironment('{{this.ID}}')" loading="lazy"></img>
+                            </td>
+                        </div>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
                         <td align="center">{{this.Terrain}}</td>
                         <td align="center">{{this.Climate}}</td>
-                        <td align="center">
-                            <button class="edit-btn"
-                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Terrain}}', '{{this.Climate}}')">Edit
-                                Environment</button>
-                        </td>
-                        <td align="center">
-                            <button class="delete-btn"
-                                onclick="deleteEnvironment('{{this.ID}}')">Delete
-                                Environment</button>
-                        </td>
+                        <td align="center">{{this.Total_Number_of_Dragons}}</td>
+
                     </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
-        <script src="./js/environments/delete_environment.js"></script>
+        <script src="./js/environments/delete_environment.js" defer></script>
+        <script src="./js/editbtn-to-form.js" defer></script>
+        <script src="./js/addbtn-to-form.js" defer></script>
 
         <!-- add new environment -->
         <div id="insert" style="display: none;">
-            <form method="POST" id="add-environment-form"
-                action="/environments/add">
+            <form method="POST" id="add-environment-form" action="/environments/add">
                 <legend><strong>Add New Environment</strong></legend>
                 <fieldset>
-                    <label>Name:</label> <input type="text"
-                        name="environment_name" required><br>
-                    <label>Terrain:</label> <input type="text"
-                        name="environment_terrain" required><br>
-                    <label>Climate:</label> <input type="text"
-                        name="environment_climate" required><br>
+                    <label>Name:</label> <input type="text" name="environment_name" required><br>
+                    <label>Terrain:</label> <input type="text" name="environment_terrain" required><br>
+                    <label>Climate:</label> <input type="text" name="environment_climate" required><br>
+                    <p><strong>Total Number of Dragons in this Environment is calculated automatically when you add a
+                            new <a href="Dragons">Dragon</a> with this Environment.</strong></p>
+                    {{!-- <label>Total_Number_of_Dragons:</label><input type="text" name="total_number_of_dragons"
+                        style="background-color: #e9e9e9" readonly><br> --}}
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseEnvironments()">
-                <input class="btn" id="submitEnvironmentForm" type="submit"
-                    value="Add Environment">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseEnvironments()">
+                <input class="btn" id="submitEnvironmentForm" type="submit" value="Add Environment">
             </form>
         </div>
         <script src="./js/environments/add_environment.js"></script>
@@ -154,21 +184,20 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
             <form id="update-environment-form-ajax">
                 <legend><strong>Update Environment</strong></legend>
                 <fieldset>
-                    <label>Environment ID:</label> <input type="text"
-                        name="environment_id" id="update-environment-id"
-                        readonly><br>
-                    <label>Name:</label> <input type="text"
-                        id="input-environment-name"
-                        name="environment_name" required><br>
-                    <label>Terrain:</label> <input type="text"
-                        id="input-environment-terrain"
-                        name="environment_terrain" required><br>
-                    <label>Climate:</label> <input type="text"
-                        id="input-environment-climate"
-                        name="environment_climate" required><br>
+                    <label>Environment ID:</label> <input type="text" name="environment_id" id="update-environment-id"
+                        style="background-color: #e9e9e9" readonly><br>
+                    <label>Name:</label> <input type="text" id="input-environment-name" name="environment_name"
+                        required><br>
+                    <label>Terrain:</label> <input type="text" id="input-environment-terrain" name="environment_terrain"
+                        required><br>
+                    <label>Climate:</label> <input type="text" id="input-environment-climate" name="environment_climate"
+                        required><br>
+                    <p><strong>Total Number of Dragons in this Environment is calculated automatically when you add a
+                            new <a href="Dragons">Dragon</a> with this Environment.</strong></p>
+                    <label>Total Number of Dragons:</label><input type="text" id="input-total-number-of-dragons"
+                        name="total_number_of_dragons" style="background-color: #e9e9e9" readonly><br>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseEnvironments()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseEnvironments()">
                 <input class="btn" type="submit" value="Save Environment">
             </form>
         </div>
@@ -181,16 +210,21 @@ Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web
                 <fieldset>
                     <p>Are you sure you wish to delete the following
                         environment?</p>
-                    <input type="hidden" name="personID" id="deletepersonID"
-                        value="1">
+                    <input type="hidden" name="personID" id="deletepersonID" value="1">
                     <label>ID:</label> 1 <br>
                     <label>Name:</label> Volcanic Caverns
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseEnvironments()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseEnvironments()">
                 <input class="btn" type="submit" value="Delete Environment">
             </form>
         </div>
-    </body>
+    </div>
+
+    <script src="./js/table-ellipsis.js" defer></script>
+    <script src="./js/toLocaleString.js" defer></script>
+    <script src="./js/sortByColumnName.js" defer></script>
+    <script src="./js/searchTables.js" defer></script>
+    <script src="./js/toggle-table-data.js" defer></script>
+</body>
 
 </html>

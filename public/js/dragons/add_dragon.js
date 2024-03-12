@@ -3,11 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
         alert("Dragon added successfully");
         localStorage.removeItem('dragonAdded'); 
     }
+  
+    var form = document.getElementById('add-dragon-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
 
-    var submitBtn = document.getElementById('submitDragonForm');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function(event) {
-            localStorage.setItem('dragonAdded', true);
+            // event.preventDefault();
+            localStorage.setItem('dragonAdded', 'true');
+            
         });
     }
-});
+  });

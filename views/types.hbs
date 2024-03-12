@@ -1,18 +1,17 @@
 <!-- Citation for the following code:
-Date: 12/22/2024 & 12/28/2024
-Adapted from two sources
-1. people.html starter code:
+Date: 12/22/2024
+showform function adapted from people.html starter code:
 Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
-2. nodejs-starterapp:
-https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
+populateUpdateForm is original code
+-->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Dragon Types</title>
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script
-            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script language="JavaScript">
+
+<head>
+    <title>Dragon Types</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script language="JavaScript">
         function showform(dowhat) {
             /*
             * four DIVS: browse, insert, update, delete
@@ -50,159 +49,172 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             }
         }
         function newType() { showform('insert'); }
-               
-        function updateType(pid) { showform('update'); }
-        function deleteType(pid) { showform('delete'); }
+
+        function updateType(typeID) { showform('update'); }
+        function deleteType(typeID) { showform('delete'); }
         function browseTypes() { showform('browse'); }
         function showAll() { showform('all'); }
         function populateUpdateForm(typeId) {
-    $.ajax({
-        url: `/types/${typeId}`,
-        type: 'GET',
-        success: function(data) {
-            document.getElementById('update-type-id').value = data.type_id; 
-            document.getElementById('input-type-name').value = data.type_name;
-            document.getElementById('input-type-average-height').value = data.type_average_height;
-            document.getElementById('input-type-average-weight').value = data.type_average_weight;
-            document.getElementById('input-type-average-age').value = data.type_average_age;
-            document.getElementById('input-total-number').value = data.total_number;
-        },
-        error: function(error) {
-            console.log('Error fetching type details:', error);
+            $.ajax({
+                url: `/types/${typeId}`,
+                type: 'GET',
+                success: function (data) {
+                    document.getElementById('update-type-id').value = data.type_id;
+                    document.getElementById('input-type-name').value = data.type_name;
+                    document.getElementById('input-type-average-height').value = data.type_average_height;
+                    document.getElementById('input-type-average-weight').value = data.type_average_weight;
+                    document.getElementById('input-type-average-age').value = data.type_average_age;
+                    document.getElementById('input-total-number').value = data.total_number;
+                    document.getElementById('input-total-number-of-people-killed').value = data.total_number_of_people_killed;
+                },
+                error: function (error) {
+                    console.log('Error fetching type details:', error);
+                }
+            });
+            document.getElementById('update').style.display = 'block';
+            document.getElementById('browse').style.display = 'none';
         }
-    });
-     document.getElementById('update').style.display = 'block';
-}
     </script>
 
-    </head>
+</head>
 
-    <body onload="browseTypes()">
+<body onload="browseTypes()">
 
-        <h1>Dragon Types</h1>
+    <h1>Dragon Types</h1>
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="abilities">Abilities</a></li>
-                <li><a href="environments">Environments</a></li>
-                <li><a href="types">Types</a></li>
-                <li><a href="dragons">Dragons</a></li>
-            </ul>
-        </nav>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="abilities">Abilities</a></li>
+            <li><a href="environments">Environments</a></li>
+            <li><a href="types">Types</a></li>
+            <li><a href="dragons">Dragons</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-wrapper">
 
         <!-- browse -->
         <div id="browse" style="display: block">
-            {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
-            --}}
-            <h2><strong>Browse Dragon Types</strong></h2>
-            <button class="new-btn"
-                onclick="newType()">New Type</button>
+            <div class="button-container">
+
+                <div class="new-button-container">
+                    <img src="./svg/add-button.svg" class="new-btn" style="width: 65px; " onclick="newType()"
+                        data-target-form="insert" loading="lazy"></img>
+                </div>
+                <div class="toggle-btn-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggleTableData">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="table-data-label">Table Data</p>
+
+                </div>
+                <div class="main-search-box-container">
+                    <input type="text" id="searchInput" onkeyup="searchTables()" placeholder="Search.."
+                        class="main-search-box">
+                </div>
+            </div>
             <table id="types-table">
                 <thead>
                     <tr>
-                        {{#each data.[0]}}
+                        {{!-- {{#each data.[0]}}
                         <th>{{@key}}</th>
-                        {{/each}}
+                        {{/each}} --}}
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Average Height (ft)</th>
+                        <th>Average Weight (lbs)</th>
+                        <th>Average Age (yrs)</th>
+                        <th>Total Number of People Killed</th>
+                        <th>Total Number of Dragons</th>
+
                     </tr>
                 </thead>
 
                 <tbody>
                     {{#each data}}
                     <tr data-value={{this.ID}}>
+                        <div class="icon-flex">
+                            <td>
+                                <img src="./svg/edit-button.svg" class="edit-btn" style="width: 35px; height: 35px; padding-bottom:6px"
+                                    onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Average_Height}}', '{{this.Average_Weight}}', '{{this.Average_Age}}', '{{this.Total_Number_of_People_Killed}}', '{{this.Total_Number}}')"
+                                    loading="lazy"></img>
+
+                                <img src="./svg/delete-button.svg" class="delete-btn" style="width: 35px; height: 35px; padding-bottom:8px"
+                                    onclick="deleteType('{{this.ID}}')" loading="lazy"></img>
+                            </td>
+                        </div>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
-                        <td align="center">{{this.Average_Height}} ft</td>
-                        <td align="center">{{this.Average_Weight}} lbs</td>
-                        <td align="center">{{this.Average_Age}} yrs</td>
+                        <td align="center">{{this.Average_Height}}</td>
+                        <td align="center">{{this.Average_Weight}}</td>
+                        <td align="center">{{this.Average_Age}}</td>
+                        <td align="center">{{this.Total_Number_of_People_Killed}}</td>
                         <td align="center">{{this.Total_Number}}</td>
-                        <td align="center">
-                            <button class="edit-btn"
-                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Average_Height}}', '{{this.Average_Weight}}', '{{this.Average_Age}}', '{{this.Total_Number}}')">Edit
-                                Type</button>
-                        </td>
-                        <td align="center">
-                            <button class="delete-btn"
-                                onclick="deleteType('{{this.ID}}')">Delete
-                                Type</button>
-                        </td>
+
                     </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
         <script src="./js/types/delete_type.js"></script>
+        <script src="./js/editbtn-to-form.js"></script>
+        <script src="./js/addbtn-to-form.js" defer></script>
 
         <!-- add new dragon type -->
         <div id="insert" style="display: none">
             <form method="POST" id="add-type-form" action="/types/add">
                 <legend><strong>Add New Type</strong></legend>
                 <fieldset class="fields">
-                    <label>Name:</label> <input type="text"
-                        name="type_name" required><br>
-                    <p><strong> The other values are calculated automatically
-                            when you add a new <a href="dragons">Dragon</a>
+                    <label>Name:</label> <input type="text" name="type_name" required><br>
+                    <p><strong> The values are calculated automatically
+                            when you add a new <a href="dragons">Dragon</a> with
+                            this Type.
                         </strong></p>
-                    {{!-- <label>Average Height (ft):</label> <input
-                        type="number"
-                        name="type_average_height" readonly><br>
-                    <label>Average Weight (lbs):</label> <input type="number"
-                        name="type_average_weight" readonly><br>
-                    <label>Average Age (yrs):</label> <input type="number"
-                        name="type_average_age" readonly><br>
-                    <label>Total Number:</label> <input type="number"
-                        name="total_number" readonly><br> --}}
+                    {{!-- <label>Average Height (ft):</label> <input type="number" name="type_average_height"
+                        readonly><br>
+                    <label>Average Weight (lbs):</label> <input type="number" name="type_average_weight" readonly><br>
+                    <label>Average Age (yrs):</label> <input type="number" name="type_average_age" readonly><br>
+                    <label>Total Number:</label> <input type="number" name="total_number" readonly><br> --}}
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseTypes()">
-                <input class="btn" id="submitTypeForm" type="submit"
-                    value="Add Type">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseTypes()">
+                <input class="btn" id="submitTypeForm" type="submit" value="Add Type">
             </form>
         </div>
-        <script src="./js/types/add_type.js"></script>
+        <script src="./js/types/add_type.js" defer></script>
 
         <!-- update type -->
         <div id="update" style="display: none;">
             <form id="update-type-form-ajax">
                 <legend><strong>Update Type</strong></legend>
                 <fieldset class="fields">
-                    <label>ID:</label> <input type="text" id="update-type-id"
-                        name="type_id"
-                        readonly><br>
-                    <label>Name:</label> <input type="text" id="input-type-name"
-                        name="type_name" required><br>
-                    <p><strong>Add a new <a href="dragons">Dragon</a> with this Type and the
+                    <label>ID:</label> <input type="text" id="update-type-id" name="type_id"
+                        style="background-color: #e9e9e9" readonly><br>
+                    <label>Name:</label> <input type="text" id="input-type-name" name="type_name" required><br>
+                    <p><strong>Add a new <a href="dragons">Dragon</a> with this
+                            Type and the
                             fields below will be calculated
                             automatically.</strong></p>
-                    <label>Average Height (ft):</label> <input type="number"
-                        id="input-type-average-height"
-                        name="type_average_height"
-                        style="background-color: #e9e9e9"
-                        readonly><br>
-                    <label>Average Weight (lbs):</label> <input type="number"
-                        id="input-type-average-weight"
-                        name="type_average_weight"
-                        style="background-color: #e9e9e9"
-                        readonly><br>
-                    <label>Average Age (years):</label> <input type="number"
-                        id="input-type-average-age"
-                        name="type_average_age"
-                        style="background-color: #e9e9e9"
-                        readonly><br>
-                    <label>Total Number:</label> <input type="number"
-                        id="input-total-number"
-                        name="total_number"
-                        style="background-color: #e9e9e9"
-                        readonly><br>
+                    <label>Average Height (ft):</label> <input type="number" id="input-type-average-height"
+                        name="type_average_height" style="background-color: #e9e9e9" readonly><br>
+                    <label>Average Weight (lbs):</label> <input type="number" id="input-type-average-weight"
+                        name="type_average_weight" style="background-color: #e9e9e9" readonly><br>
+                    <label>Average Age (years):</label> <input type="number" id="input-type-average-age"
+                        name="type_average_age" style="background-color: #e9e9e9" readonly><br>
+                    <label>Total Number of People Killed:</label> <input type="number"
+                        id="input-total-number-of-people-killed" name="total-number-of-people-killed"
+                        style="background-color: #e9e9e9" readonly><br>
+                    <label>Total Number:</label> <input type="number" id="input-total-number" name="total_number"
+                        style="background-color: #e9e9e9" readonly><br>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseTypes()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseTypes()">
                 <input class="btn" type="submit" value="Save Type">
             </form>
         </div>
         <script src="./js/types/update_type.js"></script>
+
 
         <!-- delete type -->
         <div id="delete" style="display: none;">
@@ -210,17 +222,23 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <legend><strong>Delete Type</strong></legend>
                 <fieldset class="fields">
                     <p>Are you sure you wish to delete the following type?</p>
-                    <input type="hidden" name="personID" id="deletepersonID"
-                        value="1">
+                    <input type="hidden" name="personID" id="deletepersonID" value="1">
                     <label>ID:</label> 1 <br>
                     <label>Name:</label> Fire Dragon
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseTypes()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseTypes()">
                 <input class="btn" type="submit" value="Delete Type">
             </form>
         </div>
 
-    </body>
+    </div>
+
+    <script src="./js/table-ellipsis.js" defer></script>
+    <script src="./js/toLocaleString.js" defer></script>
+    <script src="./js/sortByColumnName.js" defer></script>
+    <script src="./js/searchTables.js" defer></script>
+    <script src="./js/toggle-table-data.js" defer></script>
+
+</body>
 
 </html>

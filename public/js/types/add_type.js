@@ -4,10 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('typeAdded'); 
     }
   
-    var submitBtn = document.getElementById('submitTypeForm');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function(event) {
-            localStorage.setItem('typeAdded', true);
+    var form = document.getElementById('add-type-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+
+            // event.preventDefault();
+            localStorage.setItem('typeAdded', 'true');
+            
         });
     }
   });

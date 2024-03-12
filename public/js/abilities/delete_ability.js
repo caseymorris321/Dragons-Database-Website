@@ -4,7 +4,7 @@
 // https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
 function deleteAbility(abilityID) {
-  if (confirm("Are you sure you want to delete this ability?")) {
+  if (confirm("Are you sure you want to delete this Ability? This Ability will be removed from its corresponding Dragons.")) {
       let link = '/delete-ability-ajax/';
       let data = {
           id: abilityID

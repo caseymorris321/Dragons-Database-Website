@@ -1,80 +1,116 @@
-<!-- Citation for the following code:
-Date: 12/22/2024 & 12/28/2024
-Adapted from two sources
-1. people.html starter code:
-Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
-2. nodejs-starterapp:
-https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Dragons</title>
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script
-            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
-            defer></script>
 
-        <script src="./js/dragons/show_dragon_data.js" defer></script>
-    </head>
+<head>
+    <title>Dragons</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" defer></script>
 
-    <body onload="browseDragons()">
+    <script src="./js/dragons/show_dragon_data.js" defer></script>
+</head>
 
-        <h1>Dragons</h1>
+<body onload="browseDragons()">
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="abilities">Abilities</a></li>
-                <li><a href="environments">Environments</a></li>
-                <li><a href="types">Types</a></li>
-                <li><a href="dragons">Dragons</a></li>
-            </ul>
-        </nav>
+    <h1>Dragons</h1>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="abilities">Abilities</a></li>
+            <li><a href="environments">Environments</a></li>
+            <li><a href="types">Types</a></li>
+            <li><a href="dragons">Dragons</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-wrapper">
 
         <!-- browse -->
         <div id="browse" style="display: block">
             {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
             --}}
-            <h2><strong>Browse Dragons</strong></h2>
-            <div class="new-button-container">
-                <button class="new-btn"
-                    onclick="newDragon()">New Dragon</button>
+            {{!-- <h2><strong>Browse Dragons</strong></h2> --}}
+            <div class="button-container">
+                <div class="new-button-container">
+                    <img src="./svg/add-button.svg" class="new-btn" style="width: 65px; height: 65px;"
+                        onclick="newDragon()" data-target-form="insert" loading="lazy">
+                </div>
+                <div class="toggle-btn-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggleTableData">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="table-data-label">Table Data</p>
+
+                </div>
+                <div class="main-search-box-container">
+                    <input type="text" id="searchInput" onkeyup="searchTables()" placeholder="Search.."
+                        class="main-search-box">
+                </div>
             </div>
             <table id="dragons-table">
                 <thead>
-                    <tr>
+                    {{!-- <tr>
 
-                    </tr>
+                    </tr> --}}
+                    {{!-- {{#each data.[0]}}
+                    <th>{{@key}}</th>
+                    {{/each}} --}}
                     <tr>
-                        {{#each data.[0]}}
-                        <th>{{@key}}</th>
-                        {{/each}}
                         <th>Edit</th>
-                        <th>Delete</th>
+
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>
+                            <div style="display: inline-flex; align-items: center; gap: 5px;">Type<img
+                                    src="./svg/add-button.svg" class="new-btn" data-target-form="insert-type"
+                                    style="width: 15px; height: 15px;" onclick="newType()"></div>
+                        </th>
+                        <th>Height (ft)</th>
+                        <th>Weight (lbs)</th>
+                        <th>Age (yrs)</th>
+                        <th>Personality</th>
+                        <th>Alignment</th>
+                        <th>
+                            <div style="display: inline-flex; align-items: center; gap: 5px;">Environment<img
+                                    src="./svg/add-button.svg" class="new-btn" data-target-form="insert-environment"
+                                    style="width: 15px; height: 15px;" onclick="newEnvironment()" loading="lazy"></div>
+                        </th>
+                        <th>
+                            <div style="display: inline-flex; align-items: center; gap: 5px;">Abilities<img
+                                    src="./svg/add-button.svg" class="new-btn" data-target-form="insert-ability"
+                                    style="width: 15px; height: 15px;" onclick="newAbility()" loading="lazy"></div>
+                        </th>
+                        <th>Number of People Killed</th>
+                        <th>Lore</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     {{#each data}}
                     <tr data-value={{this.ID}}>
+
+                        <td>
+                            <div class="icon-flex">
+                                <img src="./svg/edit-button.svg" class="edit-btn"
+                                    style="width: 35px; height: 35px; padding-bottom:6px"
+                                    onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Type}}', '{{this.Height}}', '{{this.Weight}}', '{{this.Age}}', '{{this.Personality}}', '{{this.Alignment}}', '{{this.Environment}}', '{{this.Abilities}}', '{{this.Number_of_People_Killed}}', '{{this.Lore}}')"></img>
+                                <img src="./svg/delete-button.svg" class="delete-btn" style="width: 35px; height: 35px; padding-bottom:8px"
+                                    onclick="deleteDragon({{this.ID}})"></img>
+                            </div>
+                        </td>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
                         <td align="center">{{this.Type}}</td>
-                        <td align="center">{{this.Height}} ft</td>
-                        <td align="center">{{this.Weight}} lbs</td>
-                        <td align="center">{{this.Age}} yrs</td>
+                        <td align="center">{{this.Height}}</td>
+                        <td align="center">{{this.Weight}}</td>
+                        <td align="center">{{this.Age}}</td>
                         <td align="center">{{this.Personality}}</td>
                         <td align="center">{{this.Alignment}}</td>
                         <td align="center">{{this.Environment}}</td>
                         <td align="center">{{this.Abilities}}</td>
                         <td align="center">{{this.Number_of_People_Killed}}</td>
                         <td>{{this.Lore}}</td>
-
-                        <td align="center"><button class="edit-btn"
-                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Type}}', '{{this.Height}}', '{{this.Weight}}', '{{this.Age}}', '{{this.Personality}}', '{{this.Alignment}}', '{{this.Environment}}', '{{this.Abilities}}', '{{this.Number_of_People_Killed}}', '{{this.Lore}}')">Edit
-                                Dragon</button></td>
-                        <td align="center"><button class="delete-btn"
-                                onclick="deleteDragon({{this.ID}})">Delete
-                                Dragon</button></td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -87,27 +123,21 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             <form method="POST" id="add-dragon-form" action="/dragons/add">
                 <legend><strong>Add Dragon</strong></legend>
                 <fieldset class="fields">
-                    <label>Name:</label> <input type="text"
-                        name="dragon_name" required><br>
+                    <label>Name:</label> <input type="text" name="dragon_name" required><br>
                     <label for="type_id">Type:</label>
                     <select name="type_id" id="type_id">
                         {{#each types}}
-                        <option
-                            value="{{this.type_id}}">{{this.type_name}}</option>
+                        <option value="{{this.type_id}}">{{this.type_name}}</option>
                         {{/each}}
                         <option value>None</option>
                     </select>
                     <br>
-                    <label>Height (ft):</label> <input type="number" step=".1"
-                        min="1"
-                        name="dragon_height" required><br>
-                    <label>Weight (lbs):</label> <input type="number" step=".1"
-                        min="1"
-                        name="dragon_weight" required><br>
-                    <label>Age (yrs):</label> <input type="number" min="0"
-                        name="dragon_age" required><br>
-                    <label>Personality:</label> <input type="text"
-                        name="dragon_personality" required><br>
+                    <label>Height (ft):</label> <input type="number" step=".1" min="1" name="dragon_height"
+                        required><br>
+                    <label>Weight (lbs):</label> <input type="number" step=".1" min="1" name="dragon_weight"
+                        required><br>
+                    <label>Age (yrs):</label> <input type="number" min="0" name="dragon_age" required><br>
+                    <label>Personality:</label> <input type="text" name="dragon_personality" required><br>
                     <label>Alignment:</label>
                     <select id="dragon_alignment" name="dragon_alignment">
                         <option>Lawful Good</option>
@@ -121,69 +151,55 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         <option>Chaotic Evil</option>
                     </select>
                     <br>
-                    <label>Environment:</label> <select id="environment_id"
-                        name="environment_id">
+                    <label>Environment:</label> <select id="environment_id" name="environment_id">
                         <!-- Dynamically populate environments -->
                         {{#each environments}}
-                        <option
-                            value="{{this.environment_id}}">{{this.environment_name}}</option>
+                        <option value="{{this.environment_id}}">{{this.environment_name}}</option>
                         {{/each}}
                     </select><br>
                     <label>Abilities:</label><small>Multiple options can be
                         searched for and selected.</small><br>
-                    <select multiple
-                        id="add-input-abilities" name="abilities[]">
+                    <select multiple id="add-input-abilities" name="abilities[]">
                         {{#each abilities}}
-                        <option
-                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        <option value="{{this.ability_id}}">{{this.ability_name}}</option>
                         {{/each}}
                     </select>
                     <br>
-                    <label>Number of People Killed:</label> <input type="number"
-                        min="0"
-                        name="number_of_people_killed" required><br>
-                    <label>Lore:</label> <textarea id="dragon_lore"
-                        name="dragon_lore" rows="5" cols="5"
+                    <label>Number of People Killed:</label> <input type="number" min="0" name="number_of_people_killed"
+                        required><br>
+                    <label>Lore:</label> <textarea id="dragon_lore" name="dragon_lore" rows="5" cols="5"
                         required></textarea>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseDragons()">
-                <input class="btn" id="submitDragonForm" type="submit"
-                    value="Add Dragon">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
+                <input class="btn" id="submitDragonForm" type="submit" value="Add Dragon">
             </form>
         </div>
 
         <script src="./js/dragons/add_dragon.js" defer></script>
+        <script src="./js/editbtn-to-form.js" defer></script>
+        <script src="./js/addbtn-to-form.js" defer></script>
 
         <!-- update dragon -->
         <div id="update" style="display: none">
             <form id='update-dragon-form-ajax'>
                 <legend><strong>Update Dragon</strong></legend>
                 <fieldset class="fields">
-                    <label>ID:</label> <input type="text" name="dragon_id"
-                        id="update-dragon-id" readonly><br>
-                    <label>Name:</label> <input type="text" id="input-name"
-                        required
-                        name="dragon_name"><br>
+                    <label>ID:</label> <input type="text" name="dragon_id" id="update-dragon-id"
+                        style="background-color: #e9e9e9" readonly><br>
+                    <label>Name:</label> <input type="text" id="input-name" required name="dragon_name"><br>
                     <label>Type:</label> <select name="type_id" id="input-type">
                         {{#each types}}
-                        <option
-                            value="{{this.type_id}}">{{this.type_name}}</option>
+                        <option value="{{this.type_id}}">{{this.type_name}}</option>
                         {{/each}}
                         <option value>None</option>
                     </select>
                     <br>
-                    <label>Height (ft):</label> <input type="number" step=".1"
-                        min="1"
-                        id="input-height" name="dragon_height"><br>
-                    <label>Weight (lbs):</label> <input type="number" step=".1"
-                        min="1"
-                        id="input-weight" name="dragon_weight"><br>
-                    <label>Age (yrs):</label> <input type="number" id="input-age"
-                        min="0"
-                        name="dragon_age"><br>
-                    <label>Personality:</label> <input type="text"
-                        id="input-personality" name="dragon_personality"><br>
+                    <label>Height (ft):</label> <input type="number" step=".1" min="1" id="input-height"
+                        name="dragon_height"><br>
+                    <label>Weight (lbs):</label> <input type="number" step=".1" min="1" id="input-weight"
+                        name="dragon_weight"><br>
+                    <label>Age (yrs):</label> <input type="number" id="input-age" min="0" name="dragon_age"><br>
+                    <label>Personality:</label> <input type="text" id="input-personality" name="dragon_personality"><br>
                     <label>Alignment:</label>
                     <select id="input-alignment" name="dragon_alignment">
                         <option>Lawful Good</option>
@@ -197,36 +213,28 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                         <option>Chaotic Evil</option>
                     </select>
                     <br>
-                    <label>Environment:</label> <select id="input-environment"
-                        name="environment_id">
+                    <label>Environment:</label> <select id="input-environment" name="environment_id">
                         {{#each environments}}
-                        <option
-                            value="{{this.environment_id}}">{{this.environment_name}}</option>
+                        <option value="{{this.environment_id}}">{{this.environment_name}}</option>
                         {{/each}}
                     </select>
                     <br>
                     <label>Abilities:</label><small> Multiple options can be
                         searched for and selected.</small><br>
-                    <select multiple id="input-abilities"
-                        name="abilities[]">
+                    <select multiple id="input-abilities" name="abilities[]">
                         {{#each abilities}}
-                        <option
-                            value="{{this.ability_id}}">{{this.ability_name}}</option>
+                        <option value="{{this.ability_id}}">{{this.ability_name}}</option>
                         {{/each}}
                     </select>
                     <br>
-                    <label>Number of People Killed:</label> <input type="number"
-                        min="0"
-                        id="input-number_of_people_killed"
-                        name="number_of_people_killed" required>
+                    <label>Number of People Killed:</label> <input type="number" min="0"
+                        id="input-number_of_people_killed" name="number_of_people_killed" required>
                     <br>
-                    <label>Lore:</label> <textarea id="input-lore"
-                        name="dragon_lore" rows="5" cols="5"
+                    <label>Lore:</label> <textarea id="input-lore" name="dragon_lore" rows="5" cols="5"
                         required></textarea>
                     <br>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseDragons()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
                 <input class="btn" type="submit" value="Save Dragon">
             </form>
         </div>
@@ -238,20 +246,90 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <legend><strong>Delete Dragon</strong></legend>
                 <fieldset class="fields">
                     <p>Are you sure you wish to delete the following dragon?</p>
-                    <input type="hidden" name="dragonID" id="deletedragonID"
-                        value="1">
+                    <input type="hidden" name="dragonID" id="deletedragonID" value="1">
                     <label>ID:</label><br>
                     <label>Name:</label>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseDragons()">
-                <input class="btn" id="deleteDragonButton" type="submit"
-                    value="Delete Dragon">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
+                <input class="btn" id="deleteDragonButton" type="submit" value="Delete Dragon">
             </form>
         </div>
 
-        <script src="./js/dragons/dragon_lore_ellipsis.js" defer></script>
+        <!-- add new dragon type -->
+        <div id="insert-type" style="display: none">
+            <form method="POST" id="add-type-form" action="/types/add">
+                <legend><strong>Add New Type</strong></legend>
+                <fieldset class="fields">
+                    <label>Name:</label> <input type="text" name="type_name" required><br>
+                    <p><strong> The values are calculated automatically
+                            when you add a new <a href="dragons">Dragon</a> with
+                            this Type.
+                        </strong></p>
+                    {{!-- <label>Average Height (ft):</label> <input type="number" name="type_average_height"
+                        readonly><br>
+                    <label>Average Weight (lbs):</label> <input type="number" name="type_average_weight" readonly><br>
+                    <label>Average Age (yrs):</label> <input type="number" name="type_average_age" readonly><br>
+                    <label>Total Number:</label> <input type="number" name="total_number" readonly><br> --}}
+                </fieldset>
+                <input type="hidden" name="redirect_to" value="dragons" />
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
+                <input class="btn" id="submitTypeForm" type="submit" value="Add Type">
+            </form>
+        </div>
+        <script src="./js/types/add_type.js" defer></script>
+
+        <!-- add new environment -->
+        <div id="insert-environment" style="display: none;">
+            <form method="POST" id="add-environment-form" action="/environments/add">
+                <legend><strong>Add New Environment</strong></legend>
+                <fieldset>
+                    <label>Name:</label> <input type="text" name="environment_name" required><br>
+                    <label>Terrain:</label> <input type="text" name="environment_terrain" required><br>
+                    <label>Climate:</label> <input type="text" name="environment_climate" required><br>
+                    <p><strong>Total Number of Dragons in this Environment is calculated automatically when you add a
+                            new <a href="Dragons">Dragon</a> with this Environment.</strong></p>
+                    {{!-- <label>Total_Number_of_Dragons:</label><input type="text" name="total_number_of_dragons"
+                        style="background-color: #e9e9e9" readonly><br> --}}
+                </fieldset>
+                <input type="hidden" name="redirect_to" value="dragons" />
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
+                <input class="btn" id="submitEnvironmentForm" type="submit" value="Add Environment">
+            </form>
+        </div>
+        <script src="./js/environments/add_environment.js" defer></script>
+
+        <!-- add new dragon ability -->
+        <div id="insert-ability" style="display: none;">
+            <form method="POST" id="add-ability-form" action="/abilities/add">
+                <legend><strong>Add New Ability</strong></legend>
+                <fieldset class="fields">
+                    <label>Name:</label> <input type="text" name="ability_name" required><br>
+                    <label>Proficiency:</label> <select name="ability_proficiency" required>
+                        <option value="Apprentice">Apprentice</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Master">Master</option>
+                    </select>
+                    <p><strong>Total Number of Dragons with this Ability is calculated automatically when you add a new
+                            <a href="Dragons">Dragon</a> with this Ability.</strong></p>
+                    {{!-- <label>Total Number of Dragons:</label>
+                    <input type="text" name="total_number_of_dragons" readonly><br> --}}
+                </fieldset>
+                <input type="hidden" name="redirect_to" value="dragons" />
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseDragons()">
+                <input class="btn" type="submit" id="submitAbilityForm" value="Add Ability">
+            </form>
+        </div>
+
+        <script src="./js/abilities/add_ability.js" defer></script>
         <script src="./js/dragons/require_dragon_abilities.js" defer></script>
         <script src="./js/dragons/dragon_abilities_select.js" defer></script>
-    </body>
+        <script src="./js/table-ellipsis.js" defer></script>
+        <script src="./js/toggle-table-data.js" defer></script>
+        <script src="./js/toLocaleString.js" defer></script>
+        <script src="./js/sortByColumnName.js" defer></script>
+        <script src="./js/searchTables.js" defer></script>
+
+    </div>
+</body>
+
 </html>

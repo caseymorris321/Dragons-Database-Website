@@ -15,17 +15,20 @@ updateAbilityForm.addEventListener("submit", function (e) {
     let abilityId = document.getElementById("update-ability-id").value;
     let inputName = document.getElementById("input-ability-name");
     let inputProficiency = document.getElementById("input-ability-proficiency");
+    let inputTotalNumberOfDragons = document.getElementById("input-total-number-of-dragons");
 
     // Get the values from the form fields
     let nameValue = inputName.value;
     let proficiencyValue = inputProficiency.value
+    let totalNumberOfDragonsValue = inputTotalNumberOfDragons.value
 
     
     // Put our data we want to send in a javascript object
     let data = {
         ability_id: abilityId,
         name: nameValue,
-        proficiency: proficiencyValue
+        proficiency: proficiencyValue,
+        totalNumberOfDragons: totalNumberOfDragonsValue
     }
     
     // Setup our AJAX request
@@ -37,9 +40,9 @@ updateAbilityForm.addEventListener("submit", function (e) {
     xhttp.onreadystatechange = () => {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
 
-            alert("Ability updated successfully");
             updateRow(xhttp.response, data)
-            window.location.reload();
+            // window.location.reload();
+            alert("Ability updated successfully");
 
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
@@ -70,6 +73,7 @@ function updateRow(data, abilityID){
             // Reassign data to our value we updated to
             td.innerHTML = parsedData[1].name; 
             td.innerHTML = parsedData[2].proficiency;  
+            td.innerHtml = pasedData[3].totalNumberOfDragons
        }
     }
 }

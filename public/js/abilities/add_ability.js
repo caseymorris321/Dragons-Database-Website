@@ -1,13 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
-  if (localStorage.getItem('abilityAdded')) {
-      alert("Ability added successfully");
-      localStorage.removeItem('abilityAdded'); 
-  }
+    if (localStorage.getItem('abilityAdded')) {
+        alert("Ability added successfully");
+        localStorage.removeItem('abilityAdded'); 
+    }
+  
+    var form = document.getElementById('add-ability-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
 
-  var submitBtn = document.getElementById('submitAbilityForm');
-  if (submitBtn) {
-      submitBtn.addEventListener('click', function(event) {
-          localStorage.setItem('abilityAdded', true);
-      });
-  }
-});
+            // event.preventDefault();
+            localStorage.setItem('abilityAdded', 'true');
+            
+        });
+    }
+  });

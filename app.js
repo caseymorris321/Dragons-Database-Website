@@ -11,54 +11,13 @@
 // Express
 const express = require('express');   // We are using the express library for the web server
 const app = express();            // We need to instantiate an express object to interact with the server in our code
-const path = require('path');
-const compression = require('compression');
 const db = require('./database/db-connector')  // Connect to DB
 
 PORT = 39006;                 // Set a port number at the top so it's easy to change in the future
 
-// <!-- Citation for the following code:
-// Date: 3/6/2024
-// This code is an attempt to fix "GET net::ERR_CONTENT_LENGTH_MISMATCH"
-// It may not be necessary.
-// From https://stackoverflow.com/questions/56450228/getting-neterr-incomplete-chunked-encoding-200-when-consuming-event-stream-usi -->
-const shouldCompress = (req, res) => {
-    if (req.headers["x-no-compression"]) {
-        return false;
-    }
-    if (res.getHeader('Content-Type') === 'text/event-stream') {
-        return false;
-    }
-    return compression.filter(req, res);
-};
-app.use(compression({ filter: shouldCompress }));
-
-const session = require('express-session');
-const flash = require('connect-flash');
-
-app.use(session({
-    secret: 'some_secret_key',
-    resave: false,
-    saveUninitialized: false,
-}));
-
-app.use(flash());
-
-
 // <!-- Middleware -->
-app.use((req, res, next) => {
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    next();
-});
-app.use((req, res, next) => {
-    res.header('"cookies", "storage"');
-    next();
-});
-app.use(express.json({ limit: '1000mb' }));  // Probably not needed
+app.use(express.json());
 app.use(express.urlencoded({
-    limit: '1000mb',
     extended: true
 }));
 app.use(express.static('public'));
@@ -68,7 +27,6 @@ const { engine } = require('express-handlebars');
 const exphbs = require('express-handlebars');     // Import express-handlebars
 app.engine('.hbs', engine({ extname: ".hbs" }));  // Create an instance of the handlebars engine to process templates
 app.set('view engine', '.hbs');                 // Tell express to use the handlebars engine whenever it encounters a *.hbs file.
-
 
 /*
     ROUTES
@@ -97,6 +55,10 @@ app.get('/dragons', function (req, res) {
     LEFT JOIN Dragons_Abilities ON Dragons.dragon_id = Dragons_Abilities.dragon_id
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
     GROUP BY Dragons.dragon_id
+    ORDER BY Dragons.dragon_name  ASC, 
+    Types.type_name  ASC, 
+    Environments.environment_name ASC,
+    Dragons.dragon_alignment ASC;
 `;
 
     // Execute the query
@@ -194,16 +156,15 @@ app.get('/dragons/:id', function (req, res) {
         if (results.length > 0) {
             res.json(results[0]);
         } else {
-            res.status(404).send('Dragon not found');
+            res.status(404).send('Dragon name already exists.');
         }
     });
 });
 
-// <!-- Add Dragons -->
+// <!-- Add a Dragon -->
 app.post('/dragons/add', function (req, res) {
     const data = req.body;
 
-    // const typeId = data.type_id === "" ? null : data.type_id;
     const typeId = data.type_id === "" || data.type_id === "NULL" ? null : parseInt(data.type_id);
 
     // Query to add Dragons
@@ -258,7 +219,7 @@ app.put('/put-dragon-ajax', function (req, res) {
     ], function (error) {
         if (error) {
             console.error('Error updating dragon:', error);
-            return res.sendStatus(500); 
+            return res.sendStatus(500);
         }
         // Handle Dragon_Abilities update
         let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
@@ -266,7 +227,7 @@ app.put('/put-dragon-ajax', function (req, res) {
         db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
             if (deleteError) {
                 console.error('Error deleting existing abilities:', deleteError);
-                return res.sendStatus(500); 
+                return res.sendStatus(500);
             }
 
             // Insert new abilities for the dragon
@@ -324,16 +285,20 @@ app.get('/types', function (req, res) {
     SELECT 
         t.type_id, 
         t.type_name, 
-        AVG(d.dragon_height) AS type_average_height, 
-        AVG(d.dragon_weight) AS type_average_weight, 
-        AVG(d.dragon_age) AS type_average_age, 
+        ROUND(AVG(d.dragon_height), 2) AS type_average_height, 
+        ROUND(AVG(d.dragon_weight), 2) AS type_average_weight, 
+        ROUND(AVG(d.dragon_age), 2) AS type_average_age, 
+        COALESCE(SUM(d.number_of_people_killed), 0) AS total_number_of_people_killed,
         COUNT(d.dragon_id) AS total_number
     FROM 
         Types t
     LEFT JOIN 
         Dragons d ON t.type_id = d.type_id
     GROUP BY 
-        t.type_id;
+        t.type_id
+    ORDER BY 
+    t.type_name,    
+        total_number DESC;
     `;
 
     // Execute Query
@@ -348,7 +313,8 @@ app.get('/types', function (req, res) {
             Average_Height: type.type_average_height || 0,
             Average_Weight: type.type_average_weight || 0,
             Average_Age: type.type_average_age || 0,
-            Total_Number: type.total_number || 0
+            Total_Number_of_People_Killed: type.total_number_of_people_killed || 0,
+            Total_Number: type.total_number || 0,
         }));
         res.render('types', { data: modifiedResults });
     });
@@ -356,7 +322,7 @@ app.get('/types', function (req, res) {
 
 // <!-- Get a single Type -->
 app.get('/types/:id', function (req, res) {
-    let typeId = req.params.id; 
+    let typeId = req.params.id;
 
     // Query to get Type
     let query = `
@@ -366,7 +332,9 @@ app.get('/types/:id', function (req, res) {
         COALESCE(AVG(d.dragon_height), 0) AS type_average_height, 
         COALESCE(AVG(d.dragon_weight), 0) AS type_average_weight, 
         COALESCE(AVG(d.dragon_age), 0) AS type_average_age, 
+        COALESCE(SUM(d.number_of_people_killed), 0) AS total_number_of_people_killed,
         COUNT(d.dragon_id) AS total_number
+
     FROM 
         Types t
     LEFT JOIN 
@@ -380,38 +348,45 @@ app.get('/types/:id', function (req, res) {
     db.pool.query(query, [typeId], function (error, results) {
         if (error) {
             console.error('Error fetching type details:', error);
-            return res.sendStatus(500); 
+            return res.sendStatus(500);
         }
 
         // Query will return one row since type_id is unique
         if (results.length > 0) {
-            res.json(results[0]); 
+            res.json(results[0]);
         } else {
-            res.status(404).send('Type not found'); 
+            res.status(404).send('Type name already exists.');
         }
     });
 });
 
 // <!-- Add a Type -->
 app.post('/types/add', function (req, res) {
-    const { 
-        type_name, 
-        type_average_height, 
-        type_average_weight, 
-        type_average_age, 
-        total_number 
+    const {
+        type_name,
+        type_average_height,
+        type_average_weight,
+        type_average_age,
+        total_number_of_people_killed,
+        total_number
     } = req.body;
+    let redirect_to = req.body.redirect_to;
 
     // Query to add Type
-    const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number) VALUES (?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number) VALUES (?, ?, ?, ?, ?, ?)`;
 
     // Execute query
-    db.pool.query(query, [type_name, type_average_height, type_average_weight, type_average_age, total_number], function (error, results) {
+    db.pool.query(query, [type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number], function (error, results) {
         if (error) {
             console.error('Error adding new type:', error);
-            return res.sendStatus(500); 
+            return res.sendStatus(500);
         }
-        res.redirect('/types'); 
+        if (redirect_to === 'dragons') {
+            res.redirect('/dragons');
+        } else {
+            // Default redirect to '/types' if 'redirect_to' is not specified or if it's 'types'
+            res.redirect('/types');
+        }
     });
 });
 
@@ -421,18 +396,18 @@ app.put('/put-type-ajax', function (req, res) {
     let data = req.body;
 
     let typeId = parseInt(data.type_id); // ID must be integer
-    
+
     // Query to update Type
     let updateTypeQuery = `
         UPDATE Types 
         SET type_name = ?, type_average_height = ?, type_average_weight = ?, 
-            type_average_age = ?, total_number = ? 
+            type_average_age = ?, total_number_of_people_killed = ?, total_number = ?
         WHERE type_id = ?`;
 
     // Execute query to update Type
     db.pool.query(updateTypeQuery, [
         data.type_name, data.type_average_height, data.type_average_weight,
-        data.type_average_age, data.total_number, typeId
+        data.type_average_age, data.total_number, data.total_number_of_people_killed, typeId
     ], function (error) {
         if (error) {
             console.error('Error updating type:', error);
@@ -445,7 +420,7 @@ app.put('/put-type-ajax', function (req, res) {
 // <!-- Delete a Type -->
 app.delete('/delete-type-ajax/', function (req, res) {
     let data = req.body;
-    let typeID = parseInt(data.id); 
+    let typeID = parseInt(data.id);
 
     let deleteTypes = `DELETE FROM Types WHERE type_id = ?`;
 
@@ -453,9 +428,9 @@ app.delete('/delete-type-ajax/', function (req, res) {
     db.pool.query(deleteTypes, [typeID], function (error, rows, fields) {
         if (error) {
             console.log(error);
-            res.sendStatus(400); 
+            res.sendStatus(400);
         } else {
-            res.sendStatus(204); 
+            res.sendStatus(204);
         }
     });
 });
@@ -465,7 +440,25 @@ app.delete('/delete-type-ajax/', function (req, res) {
 // <!-- Get all Environments -->
 app.get('/environments', function (req, res) {
     // Query to fetch all Environments
-    let queryEnvironments = "SELECT * FROM Environments;";
+    let queryEnvironments = `
+    SELECT 
+        e.environment_id, 
+        e.environment_name, 
+        e.environment_terrain, 
+        e.environment_climate,
+        COALESCE(COUNT(d.dragon_id), 0) AS total_number_of_dragons
+    FROM 
+        Environments e
+    LEFT JOIN 
+        Dragons d ON e.environment_id = d.environment_id
+    GROUP BY 
+        e.environment_id
+    ORDER BY 
+    e.environment_name,
+    e.environment_terrain ASC,
+    e.environment_climate ASC,
+    total_number_of_dragons DESC;
+`;
 
     // Execute the query
     db.pool.query(queryEnvironments, function (error, environmentResults) {
@@ -476,7 +469,8 @@ app.get('/environments', function (req, res) {
             ID: environment.environment_id,
             Name: environment.environment_name,
             Terrain: environment.environment_terrain,
-            Climate: environment.environment_climate
+            Climate: environment.environment_climate,
+            Total_Number_of_Dragons: environment.total_number_of_dragons
         }));
         res.render('environments', { data: modifiedResults });
     });
@@ -488,9 +482,21 @@ app.get('/environments/:id', function (req, res) {
 
     // Query to fetch an Environment by ID
     let query = `
-    SELECT environment_id, environment_name, environment_terrain, environment_climate
-    FROM Environments
-    WHERE environment_id = ?`;
+    SELECT 
+        e.environment_id, 
+        e.environment_name, 
+        e.environment_terrain, 
+        e.environment_climate,
+        COALESCE(COUNT(d.dragon_id), 0) AS total_number_of_dragons
+    FROM 
+        Environments e
+    LEFT JOIN 
+        Dragons d ON e.environment_id = d.environment_id
+    WHERE 
+        e.environment_id = ?
+    GROUP BY 
+        e.environment_id;
+`;
 
     // Execute the query
     db.pool.query(query, [environmentId], function (error, results) {
@@ -503,22 +509,31 @@ app.get('/environments/:id', function (req, res) {
         if (results.length > 0) {
             res.json(results[0]);
         } else {
-            res.status(404).send('Environment not found');
+            res.status(404).send('Environment name already exists.');
         }
     });
 });
 
 // <!-- Add an Environment -->
 app.post('/environments/add', function (req, res) {
-    let data = req.body;
-    let insertQuery = "INSERT INTO Environments (environment_name, environment_terrain, environment_climate) VALUES (?, ?, ?);";
+    let { environment_name, environment_terrain, environment_climate } = req.body;
+    let redirect_to = req.body.redirect_to;
+    let total_number_of_dragons = 0;
+    let insertQuery = `
+    INSERT INTO Environments (environment_name, environment_terrain, environment_climate, total_number_of_dragons)
+    VALUES (?, ?, ?, ?);
+`;
 
-    db.pool.query(insertQuery, [data.environment_name, data.environment_terrain, data.environment_climate, data.average_temperature, data.common_hazard], function (error, results) {
+    db.pool.query(insertQuery, [environment_name, environment_terrain, environment_climate, total_number_of_dragons], function (error, results) {
         if (error) {
             console.error('Error adding environment:', error);
             res.sendStatus(500);
         } else {
-            res.redirect('/environments');
+            if (redirect_to === 'dragons') {
+                res.redirect('/dragons');
+            } else {
+                res.redirect('/environments');
+            }
         }
     });
 });
@@ -563,7 +578,23 @@ app.delete('/delete-environment-ajax/', function (req, res) {
 // <!-- Get all Abilities -->
 app.get('/abilities', function (req, res) {
     // Query to fetch all Abilities
-    let query = "SELECT * FROM Abilities;";
+    let query = `
+    SELECT 
+        a.ability_id, 
+        a.ability_name, 
+        a.ability_proficiency,
+        COUNT(da.dragon_id) AS total_number_of_dragons
+    FROM 
+        Abilities a
+    LEFT JOIN 
+        Dragons_Abilities da ON a.ability_id = da.ability_id
+    GROUP BY 
+        a.ability_id, a.ability_proficiency
+    ORDER BY
+        a.ability_name ASC,
+        a.ability_proficiency ASC, 
+        total_number_of_dragons DESC;    
+    `;
 
     // Execute the query
     db.pool.query(query, function (error, abilitiesResults) {
@@ -574,7 +605,8 @@ app.get('/abilities', function (req, res) {
         const modifiedResults = abilitiesResults.map(ability => ({
             ID: ability.ability_id,
             Name: ability.ability_name,
-            Proficiency: ability.ability_proficiency
+            Proficiency: ability.ability_proficiency,
+            Total_Number_of_Dragons: ability.total_number_of_dragons
         }));
         res.render('abilities', { data: modifiedResults });
     });
@@ -586,9 +618,20 @@ app.get('/abilities/:id', function (req, res) {
 
     // Query to fetch abilities
     let query = `
-    SELECT ability_id, ability_name, ability_proficiency
-    FROM Abilities
-    WHERE ability_id = ?`;
+    SELECT 
+        a.ability_id, 
+        a.ability_name, 
+        a.ability_proficiency,
+        COUNT(da.dragon_id) AS total_number_of_dragons
+    FROM 
+        Abilities a
+    LEFT JOIN 
+        Dragons_Abilities da ON a.ability_id = da.ability_id
+    WHERE 
+        a.ability_id = ?
+    GROUP BY 
+        a.ability_id;
+    `;
 
     // Execute the query
     db.pool.query(query, [abilityId], function (error, results) {
@@ -601,22 +644,33 @@ app.get('/abilities/:id', function (req, res) {
         if (results.length > 0) {
             res.json(results[0]);
         } else {
-            res.status(404).send('Ability not found');
+            res.status(404).send('Ability name already exists.');
         }
     });
 });
 
 // <!-- Add an Ability -->
 app.post('/abilities/add', function (req, res) {
-    let data = req.body;
-    let insertQuery = "INSERT INTO Abilities (ability_name, ability_proficiency) VALUES (?, ?);";
+    let { ability_name, ability_proficiency } = req.body;
+    let redirect_to = req.body.redirect_to;
+    let total_number_of_dragons = 0;
+    let insertQuery = `
+    INSERT INTO Abilities (ability_name, ability_proficiency, total_number_of_dragons)
+    VALUES (?, ?, ?);
+    `;
 
-    db.pool.query(insertQuery, [data.ability_name, data.ability_proficiency], function (error, results) {
+    db.pool.query(insertQuery, [ability_name, ability_proficiency, total_number_of_dragons], function (error, results) {
         if (error) {
             console.error('Error adding ability:', error);
             res.sendStatus(500);
         } else {
-            res.redirect('/abilities');
+            // Conditional redirection based on the form's origin
+            if (redirect_to === 'dragons') {
+                res.redirect('/dragons');
+            } else {
+                // Default redirect to '/environments' if 'redirect_to' is not specified or if it's 'environments'
+                res.redirect('/abilities');
+            }
         }
     });
 });
@@ -661,5 +715,3 @@ app.delete('/delete-ability-ajax/', function (req, res) {
 const server = app.listen(PORT, function () {            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });
-
-// server.keepAliveTimeout = 0;

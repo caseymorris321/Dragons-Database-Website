@@ -1,5 +1,8 @@
+/*
+// This script allows table cells to expand or collapse on click.
+*/
 document.addEventListener('DOMContentLoaded', function () {
-    var cells = document.querySelectorAll('#dragons-table tbody tr td:nth-child(12)');
+    var cells = document.querySelectorAll('tbody tr td');
     cells.forEach(function (cell) {
         if (cell.scrollWidth > cell.clientWidth) {
             cell.style.cursor = 'pointer';

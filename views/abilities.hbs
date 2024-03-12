@@ -1,18 +1,16 @@
-<!-- Citation for the following code:
-Date: 12/22/2024 & 12/28/2024
-Adapted from two sources
-1. people.html starter code:
+<!-- Citation for the following showform function:
+Date: 12/22/2024
+Adapted from people.html starter code:
 Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
-2. nodejs-starterapp:
-https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
+populateUpdateForm is original code -->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Dragon Abilities</title>
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script
-            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script language="JavaScript">
+
+<head>
+    <title>Dragon Abilities</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script language="JavaScript">
         function showform(dowhat) {
             /*
             * four DIVS: browse, insert, update, delete
@@ -50,102 +48,133 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             }
         }
         function newAbility() { showform('insert'); }
-        function updateAbility(pid) { showform('update'); }
-        function deleteAbility(pid) { showform('delete'); }
+        function updateAbility(abilityID) { showform('update'); }
+        function deleteAbility(abilityID) { showform('delete'); }
         function browseAbilities() { showform('browse'); }
         function showAll() { showform('all'); }
         function populateUpdateForm(abilityId) {
-    $.ajax({
-        url: `/abilities/${abilityId}`,
-        type: 'GET',
-        success: function(data) {
-            document.getElementById('update-ability-id').value = data.ability_id;
-            document.getElementById('input-ability-name').value = data.ability_name;
-            document.getElementById('input-ability-proficiency').value = data.ability_proficiency;
-        },
-        error: function(error) {
-            console.log('Error fetching ability details:', error);
+            $.ajax({
+                url: `/abilities/${abilityId}`,
+                type: 'GET',
+                success: function (data) {
+                    document.getElementById('update-ability-id').value = data.ability_id;
+                    document.getElementById('input-ability-name').value = data.ability_name;
+                    document.getElementById('input-ability-proficiency').value = data.ability_proficiency;
+                    document.getElementById('input-total-number-of-dragons').value = data.total_number_of_dragons
+                },
+                error: function (error) {
+                    console.log('Error fetching ability details:', error);
+                }
+            });
+            document.getElementById('update').style.display = 'block';
+            document.getElementById('browse').style.display = 'none';
         }
-    });
-    document.getElementById('update').style.display = 'block'; 
-}
 
     </script>
 
-    </head>
+</head>
 
-    <body onload="browseAbilities()">
+<body onload="browseAbilities()">
 
-        <h1>Dragon Abilities</h1>
+    <h1>Dragon Abilities</h1>
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="abilities">Abilities</a></li>
-                <li><a href="environments">Environments</a></li>
-                <li><a href="types">Types</a></li>
-                <li><a href="dragons">Dragons</a></li>
-            </ul>
-        </nav>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="abilities">Abilities</a></li>
+            <li><a href="environments">Environments</a></li>
+            <li><a href="types">Types</a></li>
+            <li><a href="dragons">Dragons</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-wrapper">
 
         <!-- browse -->
         <div id="browse" style="display: block">
             {{!-- <p><a href="#" onClick="showAll()">Display all forms</a> </p>
             --}}
-            <h2><strong>Browse Dragon Abilities</strong></h2>
-            <button class="new-btn"
-                onclick="newAbility()">New Ability</button>
+            {{!-- <h2><strong>Browse Dragon Abilities</strong></h2> --}}
+            <div class="button-container">
+                <div class="new-button-container">
+                    <img src="./svg/add-button.svg" class="new-btn" style="width: 65px;" onclick="newAbility()"
+                        data-target-form="insert" loading="lazy"></img>
+                </div>
+
+                <div class="toggle-btn-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggleTableData">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="table-data-label">Table Data</p>
+
+                </div>
+                <div class="main-search-box-container">
+                    <input type="text" id="searchInput" onkeyup="searchTables()" placeholder="Search.."
+                        class="main-search-box">
+                </div>
+            </div>
             <table id="abilities-table">
                 <thead>
                     <tr>
-                        {{#each data.[0]}}
+                        {{!-- {{#each data.[0]}}
                         <th>{{@key}}</th>
-                        {{/each}}
+                        {{/each}} --}}
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Proficiency</th>
+                        <th>Total Number of Dragons</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     {{#each data}}
                     <tr data-value={{this.ID}}>
+                        <div class="icon-flex">
+                            <td align="right">
+                                <img src="./svg/edit-button.svg" class="edit-btn" style="width: 35px; height: 35px;  padding-bottom:6px"
+                                    onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Proficiency}}', '{{this.Total_Number_of_Dragons}}')"
+                                    loading="lazy"></img>
+
+
+                                <img src="./svg/delete-button.svg" class="delete-btn" style="width: 35px; height: 35px; padding-bottom:8px"
+                                    onclick="deleteAbility('{{this.ID}}')" loading="lazy"></img>
+                            </td>
+
+                        </div>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
                         <td align="center">{{this.Proficiency}}</td>
-                        <td align="center">
-                            <button class="edit-btn"
-                                onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Proficiency}}')">Edit
-                                Ability</button>
-                        </td>
-                        <td align="center">
-                            <button class="delete-btn"
-                                onclick="deleteAbility('{{this.ID}}')">Delete
-                                Ability</button>
-                        </td>
+                        <td align="center">{{this.Total_Number_of_Dragons}}</td>
+
                     </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
         <script src="./js/abilities/delete_ability.js" defer></script>
+        <script src="./js/editbtn-to-form.js" defer></script>
+        <script src="./js/addbtn-to-form.js" defer></script>
 
         <!-- add new dragon ability -->
         <div id="insert" style="display: none;">
             <form method="POST" id="add-ability-form" action="/abilities/add">
                 <legend><strong>Add New Ability</strong></legend>
                 <fieldset class="fields">
-                    <label>Name:</label> <input type="text"
-                        name="ability_name" required><br>
-                    <label>Proficiency:</label> <select
-                        name="ability_proficiency" required>
+                    <label>Name:</label> <input type="text" name="ability_name" required><br>
+                    <label>Proficiency:</label> <select name="ability_proficiency" required>
                         <option value="Apprentice">Apprentice</option>
                         <option value="Intermediate">Intermediate</option>
                         <option value="Master">Master</option>
                     </select>
+                    <p><strong>Total Number of Dragons with this Ability is calculated automatically when you add a new
+                            <a href="Dragons">Dragon</a> with this Ability.</strong></p>
+                    {{!-- <label>Total Number of Dragons:</label>
+                    <input type="text" name="total_number_of_dragons" readonly><br> --}}
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseAbilities()">
-                <input class="btn" type="submit" id="submitAbilityForm"
-                    value="Add Ability">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseAbilities()">
+                <input class="btn" type="submit" id="submitAbilityForm" value="Add Ability">
             </form>
         </div>
         <script src="./js/abilities/add_ability.js" defer></script>
@@ -155,22 +184,22 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
             <form id="update-ability-form-ajax">
                 <legend><strong>Update Ability</strong></legend>
                 <fieldset class="fields">
-                    <label>Ability ID:</label> <input type="text"
-                        id="update-ability-id"
-                        name="ability_id" readonly><br>
-                    <label>Name:</label> <input type="text"
-                        id="input-ability-name" name="ability_name"
-                        required><br>
-                    <label>Proficiency:</label> 
-                    <select id="input-ability-proficiency"
-                        name="ability_proficiency">
+                    <label>Ability ID:</label> <input type="text" id="update-ability-id" name="ability_id"
+                        style="background-color: #e9e9e9" readonly><br>
+                    <label>Name:</label> <input type="text" id="input-ability-name" name="ability_name" required><br>
+                    <label>Proficiency:</label>
+                    <select id="input-ability-proficiency" name="ability_proficiency">
                         <option>Apprentice</option>
                         <option>Intermediate</option>
                         <option>Master</option>
                     </select><br>
+                    <p><strong>Total Number of Dragons with this Ability is calculated automatically when you add a new
+                            <a href="Dragons">Dragon</a> with this Ability.</strong></p>
+                    <label>Total Number of Dragons:</label>
+                    <input type="text" name="total_number_of_dragons" id="input-total-number-of-dragons"
+                        style="background-color: #e9e9e9" readonly><br>
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseAbilities()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseAbilities()">
                 <input class="btn" type="submit" value="Save Ability">
             </form>
         </div>
@@ -183,15 +212,21 @@ https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
                 <fieldset class="fields">
                     <p>Are you sure you wish to delete the following
                         ability?</p>
-                    <input type="hidden" name="personID" id="deletepersonID"
-                        value="1">
+                    <input type="hidden" name="personID" id="deletepersonID" value="1">
                     <label>ID:</label> 1 <br>
                     <label>Name:</label> Blue Flame
                 </fieldset>
-                <input class="btn btn-cancel" type="button" value="Cancel"
-                    onClick="browseAbilities()">
+                <input class="btn btn-cancel" type="button" value="Cancel" onClick="browseAbilities()">
                 <input class="btn" type="submit" value="Delete Ability">
             </form>
-        </body>
 
-    </html>
+        </div>
+
+        <script src="./js/table-ellipsis.js" defer></script>
+        <script src="./js/toLocaleString.js" defer></script>
+        <script src="./js/sortByColumnName.js" defer></script>
+        <script src="./js/searchTables.js" defer></script>
+        <script src="./js/toggle-table-data.js" defer></script>
+</body>
+
+</html>

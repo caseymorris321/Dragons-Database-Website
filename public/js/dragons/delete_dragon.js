@@ -4,7 +4,7 @@
 // https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
 function deleteDragon(dragonID) {
-    if (confirm("Are you sure you want to delete this dragon?")) {
+    if (confirm("Are you sure you want to delete this Dragon?")) {
         let link = '/delete-dragon-ajax/';
         let data = {
             id: dragonID

@@ -4,7 +4,7 @@
 // https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 
 function deleteEnvironment(environmentID) {
-  if (confirm("Are you sure you want to delete this environment?")) {
+  if (confirm("Are you sure you want to delete this Environment? This will set the Dragons table to NULL for this Environment if there are any. Be sure to update those Dragons to their new Environment.")) {
       let link = '/delete-environment-ajax/';
       let data = {
           id: environmentID

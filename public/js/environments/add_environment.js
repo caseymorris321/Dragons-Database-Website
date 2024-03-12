@@ -4,10 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('environmentAdded'); 
     }
   
-    var submitBtn = document.getElementById('submitEnvironmentForm');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function(event) {
-            localStorage.setItem('environmentAdded', true);
+    var form = document.getElementById('add-environment-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+
+            // event.preventDefault();
+            localStorage.setItem('environmentAdded', 'true');
+            
         });
     }
   });
