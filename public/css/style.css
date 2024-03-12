@@ -7,14 +7,14 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    line-height: 1.5;
-    background: linear-gradient(to right, #a8c0ff, #3f2b96);
 }
 
 body {
     font-family: 'Lora', serif;
     display: flex;
     flex-direction: column;
+    line-height: 1.5;
+    background: linear-gradient(to right, #a8c0ff, #3f2b96);
 }
 
 .content-wrapper {
