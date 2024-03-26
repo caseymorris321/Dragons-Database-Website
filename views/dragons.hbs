@@ -90,15 +90,15 @@
                     {{#each data}}
                     <tr data-value={{this.ID}}>
 
-                        <td>
                             <div class="icon-flex">
+                        <td>
                                 <img src="./svg/edit-button.svg" class="edit-btn"
                                     style="width: 35px; height: 35px; padding-bottom:6px"
                                     onclick="populateUpdateForm('{{this.ID}}', '{{this.Name}}', '{{this.Type}}', '{{this.Height}}', '{{this.Weight}}', '{{this.Age}}', '{{this.Personality}}', '{{this.Alignment}}', '{{this.Environment}}', '{{this.Abilities}}', '{{this.Number_of_People_Killed}}', '{{this.Lore}}')"></img>
                                 <img src="./svg/delete-button.svg" class="delete-btn" style="width: 35px; height: 35px; padding-bottom:8px"
-                                    onclick="deleteDragon({{this.ID}})"></img>
-                            </div>
+                                    onclick="deleteDragon('{{this.ID}}')"></img>
                         </td>
+                            </div>
                         <td align="center">{{this.ID}}</td>
                         <td align="center">{{this.Name}}</td>
                         <td align="center">{{this.Type}}</td>

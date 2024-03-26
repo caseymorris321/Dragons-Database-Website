@@ -281,6 +281,13 @@ input[type="button"] {
     justify-content: center;
 }
 
+.main-search-box-container {
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
+
+}
+
 .toggle-btn-container {
     position: absolute;
     right: 0;
@@ -414,29 +421,31 @@ input[type="button"]:focus {
     box-sizing: border-box;
 }
 
-.main-search-box-container {
-    position: absolute;
-    right: 0;
-    margin-right: 20px;
 
-}
 
 #searchInput {
     width: auto;
 }
 
 .faux-option {
+    box-sizing: border-box;
     width: 10%;
     display: block;
     padding: 2px;
-    margin: 2px;
+    margin: 2px 0;
     border: 1px solid #ccc;
     cursor: pointer;
+}
+
+.faux-option:hover {
+    background-color: #ebebeb; 
+    color: #000; /
 }
 
 .faux-option.selected {
     color: white;
     background-color: #007bff;
+    font-weight: bold;
 }
 
 @media (max-width: 600px) {
@@ -468,7 +477,15 @@ input[type="button"]:focus {
         justify-content: flex-start;
         border: none;
     }
-
+    .edit-btn,
+    .delete-btn {
+        font-size: 12px; 
+        /* margin: 20px 0; */
+        margin-left: 2px;
+        margin-right: 20px;
+        margin-top: 20px;
+        margin-bottom: -15px;
+    }
     table td:before {
         position: absolute;
         left: 10px;
@@ -478,6 +495,7 @@ input[type="button"]:focus {
         content: attr(data-label);
         font-weight: bold;
     }
+
 
     table td {
         padding: .5rem;
@@ -497,5 +515,51 @@ input[type="button"]:focus {
         max-width: 100%;
         object-fit: contain;
         top: -37%;
+    }
+    .toggle-btn-container {
+        display: none;
+    }
+
+    .main-search-box-container {
+        top: 20px;
+    }
+    .main-search-box-container input {
+        max-width: 150px;
+    }
+
+    form {
+        width: 90%; 
+        max-width: 500px; 
+        margin: 20px auto; 
+        padding: 20px 10px; 
+    }
+
+    form label {
+        display: block; 
+        margin-bottom: 0.5rem; 
+        color: #333;
+        font-size: 1rem; 
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        min-width: 70%; 
+        padding: 10px; 
+        margin-bottom: 1rem; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem; 
+    }
+
+    .button-container,
+    .new-button-container {
+        flex-direction: column; 
+        align-items: center; 
+    }
+
+    .faux-option {
+        width: calc(30% - 10px);
     }
 }
