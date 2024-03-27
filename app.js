@@ -49,7 +49,7 @@ app.get('/dragons', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           string_agg(Abilities.ability_name, ', ') AS Abilities,
+           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
@@ -138,7 +138,7 @@ app.get('/dragons/:id', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           string_agg(Abilities.ability_name, ', ') AS Abilities,
+           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
@@ -235,7 +235,7 @@ app.put('/put-dragon-ajax', function (req, res) {
 
             // Insert new abilities for the dragon
             if (data.abilities && data.abilities.length > 0) {
-                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES $1`;
+                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)`;
                 let abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId)]);
 
                 db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (insertError) {
