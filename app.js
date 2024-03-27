@@ -13,7 +13,7 @@ const express = require('express');   // We are using the express library for th
 const app = express();            // We need to instantiate an express object to interact with the server in our code
 const db = require('./database/db-connector')  // Connect to DB
 
-PORT = 39006;                 // Set a port number at the top so it's easy to change in the future
+const PORT = process.env.PORT || 4000;                 // Set a port number at the top so it's easy to change in the future
 
 // <!-- Middleware -->
 app.use(express.json());
@@ -712,6 +712,6 @@ app.delete('/delete-ability-ajax/', function (req, res) {
 /*
     LISTENER
 */
-const server = app.listen(PORT, function () {            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
+app.listen(PORT, function () {            // This is the basic syntax for what is called the 'listener' which receives incoming requests on the specified PORT.
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });
