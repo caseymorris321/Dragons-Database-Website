@@ -47,29 +47,32 @@ app.get("/", function (req, res) {
 app.get("/dragons", function (req, res) {
   // Query to get Dragons
   let queryDragons = `
-    SELECT 
-    d.dragon_id, 
-    d.dragon_name, 
-    t.type_name AS type, 
-    d.dragon_height, 
-    d.dragon_weight, 
-    d.dragon_age, 
-    d.dragon_personality, 
-    d.dragon_alignment, 
-    e.environment_name AS environment, 
-    string_agg(a.ability_name, ', ') AS abilities,
-    d.number_of_people_killed, 
-    d.dragon_lore
-FROM 
-    Dragons d
+  SELECT
+  d.dragon_id,
+  d.dragon_name,
+  t.type_name AS type,
+  d.dragon_height,
+  d.dragon_weight,
+  d.dragon_age,
+  d.dragon_personality,
+  d.dragon_alignment,
+  e.environment_name AS environment,
+  (
+      SELECT STRING_AGG(a.ability_name, ', ')
+      FROM Dragons_Abilities da
+      JOIN Abilities a ON da.ability_id = a.ability_id
+      WHERE da.dragon_id = d.dragon_id
+  ) AS abilities,
+  d.number_of_people_killed,
+  d.dragon_lore
+FROM
+  Dragons d
 LEFT JOIN Types t ON d.type_id = t.type_id
 LEFT JOIN Environments e ON d.environment_id = e.environment_id
-LEFT JOIN Dragons_Abilities da ON d.dragon_id = da.dragon_id
-LEFT JOIN Abilities a ON da.ability_id = a.ability_id
-GROUP BY 
-    d.dragon_id, t.type_name, e.environment_name
-ORDER BY 
-    d.dragon_name ASC;
+GROUP BY
+  d.dragon_id, t.type_name, e.environment_name
+ORDER BY
+  d.dragon_name ASC;
 
 `;
 
