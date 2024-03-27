@@ -250,7 +250,57 @@ app.post("/dragons/add", function (req, res) {
     });
 });
 
-
+app.put("/put-dragon-ajax", function (req, res) {
+    const data = req.body;
+    let dragonId = parseInt(data.dragon_id);
+  
+    if (isNaN(dragonId)) {
+      return res.status(400).send("Invalid dragon ID.");
+    }
+  
+    // Prepare the main dragon update query
+    let updateDragonQuery = `
+      UPDATE Dragons 
+      SET 
+        dragon_name = $1, 
+        type_id = $2, 
+        dragon_height = $3, 
+        dragon_weight = $4, 
+        dragon_age = $5, 
+        dragon_personality = $6, 
+        dragon_alignment = $7, 
+        environment_id = $8, 
+        number_of_people_killed = $9, 
+        dragon_lore = $10 
+      WHERE 
+        dragon_id = $11
+    `;
+  
+    // Note: Ensure that data.type_id and other fields are appropriately parsed or defaulted before this operation
+    db.pool.query(updateDragonQuery, [
+      data.name, // Ensure these data properties match what's being sent from the client
+      data.type_id || null,
+      data.height,
+      data.weight,
+      data.age,
+      data.personality,
+      data.alignment,
+      data.environment_id || null,
+      data.number_of_people_killed,
+      data.lore,
+      dragonId,
+    ], function (error) {
+      if (error) {
+        console.error("Error updating dragon:", error);
+        return res.status(500).send("Error updating dragon.");
+      }
+  
+      // If there are abilities to update, handle them here
+      // This example omits ability update logic for brevity
+  
+      res.status(200).send("Dragon updated successfully.");
+    });
+  });
 
 
 // <!-- Delete Dragons -->
