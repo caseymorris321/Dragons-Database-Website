@@ -67,7 +67,7 @@ LEFT JOIN Environments e ON d.environment_id = e.environment_id
 LEFT JOIN Dragons_Abilities da ON d.dragon_id = da.dragon_id
 LEFT JOIN Abilities a ON da.ability_id = a.ability_id
 GROUP BY 
-    d.dragon_id, t.type_name, e.environment_name, a.ability_name
+    d.dragon_id, t.type_name, e.environment_name
 ORDER BY 
     d.dragon_name ASC;
 
