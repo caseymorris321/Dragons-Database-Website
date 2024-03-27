@@ -290,7 +290,7 @@ app.put('/put-dragon-ajax', function (req, res) {
 
             // Insert new abilities for the dragon
             if (data.abilities && data.abilities.length > 0) {
-                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES $1`;
+                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)`;
                 let abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId)]);
 
                 db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (insertError) {
