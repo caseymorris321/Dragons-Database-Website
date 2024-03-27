@@ -142,7 +142,7 @@ ORDER BY
 
 // <!-- Get a single Dragon -->
 app.get("/dragons/:id", function (req, res) {
-  let dragonId = req.params.id;
+let dragonId = parseInt(req.params.id, 10);
 
   // Query to fetch single Dragon by ID
   let query = `
@@ -157,13 +157,13 @@ app.get("/dragons/:id", function (req, res) {
         ), 'No Abilities') AS abilities,
         d.number_of_people_killed,
         d.dragon_lore
-    FROM Dragons
-    LEFT JOIN Types ON Dragons.type_id = Types.type_id
-    LEFT JOIN Environments ON Dragons.environment_id = Environments.environment_id
-    LEFT JOIN Dragons_Abilities ON Dragons.dragon_id = Dragons_Abilities.dragon_id
+    FROM Dragons d
+    LEFT JOIN Types t ON d.type_id = t.type_id
+    LEFT JOIN Environments e ON d.environment_id = e.environment_id
+    LEFT JOIN Dragons_Abilities ON d.dragon_id = Dragons_Abilities.dragon_id
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
-    WHERE Dragons.dragon_id = $1
-    GROUP BY Dragons.dragon_id, Types.type_name, Environments.environment_name
+    WHERE d.dragon_id = $1
+    GROUP BY d.dragon_id, t.type_name, e.environment_name
     `;
 
   // Execute the query
