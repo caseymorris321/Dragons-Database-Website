@@ -16,12 +16,7 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    max: 10, // Set pool max size to 10
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    connectionString: process.env.DATABASE_URL, // This grabs the full URL from the environment variable
 });
 
-module.exports.pool = pool
+module.exports.pool = pool;
