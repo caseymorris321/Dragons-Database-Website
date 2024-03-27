@@ -94,7 +94,7 @@ ORDER BY
       Personality: dragon.dragon_personality,
       Alignment: dragon.dragon_alignment,
       Environment: dragon.environment,
-      Abilities: dragon.Abilities,
+      Abilities: dragon.abilities,
       Number_of_People_Killed: dragon.number_of_people_killed,
       Lore: dragon.dragon_lore,
     }));
