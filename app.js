@@ -12,12 +12,10 @@
 const express = require("express"); // We are using the express library for the web server
 const app = express(); // We need to instantiate an express object to interact with the server in our code
 const db = require("./database/db-connector"); // Connect to DB
-const cors = require("cors");
 
 const PORT = process.env.PORT || 4000; // Set a port number at the top so it's easy to change in the future
 
 // <!-- Middleware -->
-app.use(cors());
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -151,8 +149,14 @@ app.get("/dragons/:id", function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           COALESCE(string_agg(Abilities.ability_name, ', '), 'No Abilities') AS Abilities,
-           Dragons.number_of_people_killed, Dragons.dragon_lore
+           COALESCE((
+            SELECT STRING_AGG(a.ability_name, ', ')
+            FROM Dragons_Abilities da
+            JOIN Abilities a ON da.ability_id = a.ability_id
+            WHERE da.dragon_id = d.dragon_id
+        ), 'No Abilities') AS abilities,
+        d.number_of_people_killed,
+        d.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
     LEFT JOIN Environments ON Dragons.environment_id = Environments.environment_id
@@ -163,14 +167,14 @@ app.get("/dragons/:id", function (req, res) {
     `;
 
   // Execute the query
-  db.pool.query(query, [dragonId], function (error, results) {
+  db.pool.query(query, [dragonId], function (error, result) {
     if (error) {
       console.error("Error fetching dragon details:", error);
       return res.sendStatus(500);
     }
     // Query will return one row since dragon_id is unique
-    if (results.length > 0) {
-      res.json(results[0]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
     } else {
       res.status(404).send("Dragon name already exists.");
     }
@@ -247,89 +251,7 @@ app.post("/dragons/add", function (req, res) {
 });
 
 
-// <!-- Update Dragons -->
-app.put("/put-dragon-ajax", function (req, res) {
-  let data = req.body;
 
-  let dragonId = parseInt(data.dragon_id); // Must be integer
-
-  // Handle NULL Types
-  const typeId = data.type === "" ? null : data.type;
-  // Make sure parsing did not result in NaN. If it did, set typeId to null (indicative of a parsing error or invalid input).
-  if (isNaN(typeId)) {
-    typeId = null;
-  }
-  // Handle update Dragon
-  let updateDragonQuery = `
-        UPDATE Dragons 
-        SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, 
-            dragon_age = $5, dragon_personality = $6, dragon_alignment = $7, 
-            environment_id = $8, number_of_people_killed = $9, dragon_lore = $10 
-        WHERE dragon_id = $11`;
-
-  db.pool.query(
-    updateDragonQuery,
-    [
-      data.name,
-      typeId,
-      data.height,
-      data.weight,
-      data.age,
-      data.personality,
-      data.alignment,
-      data.environment,
-      data.number_of_people_killed,
-      data.lore,
-      dragonId,
-    ],
-    function (error) {
-      if (error) {
-        console.error("Error updating dragon:", error);
-        return res.sendStatus(500);
-      }
-      // Handle Dragon_Abilities update
-      let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
-
-      db.pool.query(
-        deleteExistingAbilitiesQuery,
-        [dragonId],
-        function (deleteError) {
-          if (deleteError) {
-            console.error("Error deleting existing abilities:", deleteError);
-            return res.sendStatus(500);
-          }
-
-          // Insert new abilities for the dragon
-          if (data.abilities && data.abilities.length > 0) {
-            let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)`;
-            let abilitiesValues = data.abilities.map((abilityId) => [
-              dragonId,
-              parseInt(abilityId),
-            ]);
-
-            db.pool.query(
-              insertAbilitiesQuery,
-              [abilitiesValues],
-              function (insertError) {
-                if (insertError) {
-                  console.error("Error inserting new abilities:", insertError);
-                  return res.sendStatus(500); // Internal Server Error
-                }
-                res.send({
-                  message: "Dragon and abilities updated successfully.",
-                });
-              }
-            );
-          } else {
-            res.send({
-              message: "Dragon updated successfully, no abilities to update.",
-            });
-          }
-        }
-      );
-    }
-  );
-});
 
 // <!-- Delete Dragons -->
 app.delete("/delete-dragon-ajax/", function (req, res) {
