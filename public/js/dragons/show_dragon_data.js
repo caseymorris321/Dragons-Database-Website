@@ -90,7 +90,7 @@ function populateUpdateForm(dragonId) {
         success: function (data) {
             // Clear previous Abilities
             let abilitiesSelect = document.getElementById('input-abilities');
-            const abilities = data.Abilities ? data.Abilities.split(', ') : [];
+            const currentAbilities = data.abilities || [];
             Array.from(abilitiesSelect.options).forEach(option => option.selected = false);
 
             // Types Dropdown
@@ -128,9 +128,11 @@ function populateUpdateForm(dragonId) {
             document.getElementById('input-lore').value = data.dragon_lore;
 
             // Abilities Select
-            abilities.forEach(ability => {
+            currentAbilities.forEach(abilityName => {
                 Array.from(abilitiesSelect.options).forEach(option => {
-                    if (option.text === ability) option.selected = true;
+                    if (option.textContent.trim() === abilityName.trim()) {
+                        option.selected = true;
+                    }
                 });
             });
         },
