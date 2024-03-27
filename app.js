@@ -146,7 +146,7 @@ app.get('/dragons/:id', function (req, res) {
     LEFT JOIN Dragons_Abilities ON Dragons.dragon_id = Dragons_Abilities.dragon_id
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
     WHERE Dragons.dragon_id = $1
-    GROUP BY Dragons.dragon_id
+    GROUP BY Dragons.dragon_id, Types.type_name, Environments.environment_name
     `;
 
     // Execute the query
@@ -181,7 +181,7 @@ app.post('/dragons/add', function (req, res) {
         }
         const dragonId = result.insertId;
         if (Array.isArray(data.abilities) && data.abilities.length) {
-            const insertAbilitiesQuery = 'INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES $1';
+            const insertAbilitiesQuery = 'INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)';
             const abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId, 10)]);
 
             db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (error) {
