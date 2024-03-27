@@ -253,62 +253,70 @@ app.post("/dragons/add", function (req, res) {
 // <!-- Update Dragons -->
 app.put('/put-dragon-ajax', function (req, res) {
     let data = req.body;
-
     let dragonId = parseInt(data.dragon_id); // Must be integer
-
+  
     // Handle NULL Types
     const typeId = data.type === "" ? null : data.type;
     // Make sure parsing did not result in NaN. If it did, set typeId to null (indicative of a parsing error or invalid input).
     if (isNaN(typeId)) {
-        typeId = null;
+      typeId = null;
     }
+  
     // Handle update Dragon
     let updateDragonQuery = `
-        UPDATE Dragons 
-        SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, 
-            dragon_age = $5, dragon_personality = $6, dragon_alignment = $7, 
-            environment_id = $8, number_of_people_killed = $9, dragon_lore = $10 
-        WHERE dragon_id = $11`;
-
+      UPDATE Dragons
+      SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, dragon_age = $5, dragon_personality = $6, dragon_alignment = $7, environment_id = $8, number_of_people_killed = $9, dragon_lore = $10
+      WHERE dragon_id = $11
+    `;
+  
     db.pool.query(updateDragonQuery, [
-        data.name, typeId, data.height, data.weight, data.age,
-        data.personality, data.alignment, data.environment,
-        data.number_of_people_killed, data.lore, dragonId
+      data.name,
+      typeId,
+      data.height,
+      data.weight,
+      data.age,
+      data.personality,
+      data.alignment,
+      data.environment,
+      data.number_of_people_killed,
+      data.lore,
+      dragonId
     ], function (error) {
-        if (error) {
-            console.error('Error updating dragon:', error);
-            return res.sendStatus(500);
+      if (error) {
+        console.error('Error updating dragon:', error);
+        return res.status(500).send({ error: 'Error updating dragon' });
+      }
+  
+      // Handle Dragon_Abilities update
+      let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
+      db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
+        if (deleteError) {
+          console.error('Error deleting existing abilities:', deleteError);
+          return res.status(500).send({ error: 'Error deleting existing abilities' });
         }
-        // Handle Dragon_Abilities update
-        let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
-
-        db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
-            if (deleteError) {
-                console.error('Error deleting existing abilities:', deleteError);
-                return res.sendStatus(500);
+  
+        // Insert new abilities for the dragon
+        if (data.abilities && data.abilities.length > 0) {
+          // Dynamically create the VALUES part of the INSERT query
+          const insertValues = data.abilities.map((_, index) => `($1, $${index + 2})`).join(', ');
+          const queryParameters = [dragonId].concat(data.abilities.map(abilityId => parseInt(abilityId, 10)));
+  
+          let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ${insertValues}`;
+          db.pool.query(insertAbilitiesQuery, queryParameters, function (insertError) {
+            if (insertError) {
+              console.error('Error inserting new abilities:', insertError);
+              return res.status(500).send({ error: 'Error inserting new abilities' });
             }
-        
-            // Insert new abilities for the dragon
-            if (data.abilities && data.abilities.length > 0) {
-                // Dynamically create the VALUES part of the INSERT query
-                const insertValues = data.abilities.map((_, index) => `($1, $${index + 2})`).join(', ');
-                const queryParameters = [dragonId].concat(data.abilities.map(abilityId => parseInt(abilityId, 10)));
-        
-                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ${insertValues}`;
-        
-                db.pool.query(insertAbilitiesQuery, queryParameters, function (insertError) {
-                    if (insertError) {
-                        console.error('Error inserting new abilities:', insertError);
-                        return res.sendStatus(500); // Internal Server Error
-                    }
-                    res.send({ message: 'Dragon and abilities updated successfully.' });
-                });
-            } else {
-                res.send({ message: 'Dragon updated successfully, no abilities to update.' });
-            }
-        });
+  
+            res.send({ message: 'Dragon and abilities updated successfully.' });
+          });
+        } else {
+          res.send({ message: 'Dragon updated successfully, no abilities to update.' });
+        }
+      });
     });
-});
+  });
+  
 
 
 // <!-- Delete Dragons -->
