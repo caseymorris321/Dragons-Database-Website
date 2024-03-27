@@ -461,11 +461,13 @@ app.get('/environments', function (req, res) {
 `;
 
     // Execute the query
-    db.pool.query(queryEnvironments, function (error, environmentResults) {
+    db.pool.query(queryEnvironments, function (error, result) {
         if (error) {
             console.error('Error fetching environments:', error);
             res.sendStatus(500);
-        } const modifiedResults = environmentResults.map(environment => ({
+        } 
+        const environmentResults = result.rows;
+        const modifiedResults = environmentResults.map(environment => ({
             ID: environment.environment_id,
             Name: environment.environment_name,
             Terrain: environment.environment_terrain,
