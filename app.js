@@ -177,62 +177,75 @@ app.get("/dragons/:id", function (req, res) {
   });
 });
 
-// <!-- Add a Dragon -->
+// Add a Dragon
 app.post("/dragons/add", function (req, res) {
-  const data = req.body;
+    const data = req.body;
 
-  const typeId =
-    data.type_id === "" || data.type_id === "NULL"
-      ? null
-      : parseInt(data.type_id);
+    const typeId = data.type_id === "" || data.type_id === "NULL" ? null : parseInt(data.type_id);
 
-  // Query to add Dragons
-  const insertDragonQuery = `INSERT INTO Dragons (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+    // Query to add Dragons
+    const insertDragonQuery = `
+        INSERT INTO Dragons 
+        (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, 
+         dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) 
+        VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING dragon_id`;
 
-  // Execute query
-  db.pool.query(
-    insertDragonQuery,
-    [
-      data.dragon_name,
-      typeId,
-      data.dragon_height,
-      data.dragon_weight,
-      data.dragon_age,
-      data.dragon_personality,
-      data.dragon_alignment,
-      data.environment_id,
-      data.number_of_people_killed,
-      data.dragon_lore,
-    ],
-    function (error, result) {
-      if (error) {
-        console.error(error);
-        res.redirect("/dragons/add");
-      }
-      const dragonId = result.insertId;
-      if (Array.isArray(data.abilities) && data.abilities.length) {
-        const insertAbilitiesQuery =
-          "INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)";
-        const abilitiesValues = data.abilities.map((abilityId) => [
-          dragonId,
-          parseInt(abilityId, 10),
-        ]);
+    // Execute query to insert dragon
+    db.pool.query(insertDragonQuery, [
+        data.dragon_name,
+        typeId,
+        data.dragon_height,
+        data.dragon_weight,
+        data.dragon_age,
+        data.dragon_personality,
+        data.dragon_alignment,
+        data.environment_id,
+        data.number_of_people_killed,
+        data.dragon_lore,
+    ], function (error, result) {
+        if (error) {
+            console.error(error);
+            return res.redirect("/dragons/add");
+        }
 
-        db.pool.query(
-          insertAbilitiesQuery,
-          [abilitiesValues],
-          function (error) {
-            if (error) {
-              console.error(error);
-              res.redirect("/dragons/add");
+        const dragonId = result.rows[0].dragon_id;
+
+        // Check if there are abilities to add
+        if (Array.isArray(data.abilities) && data.abilities.length > 0) {
+            // Function to insert an ability
+            function insertAbility(index) {
+                if (index < data.abilities.length) {
+                    const abilityId = parseInt(data.abilities[index], 10);
+                    const insertAbilityQuery = `
+                        INSERT INTO Dragons_Abilities (dragon_id, ability_id) 
+                        VALUES ($1, $2)`;
+
+                    db.pool.query(insertAbilityQuery, [dragonId, abilityId], function (error) {
+                        if (error) {
+                            console.error(error);
+                            // Stop processing further and redirect back
+                            return res.redirect("/dragons/add");
+                        }
+
+                        // Process the next ability
+                        insertAbility(index + 1);
+                    });
+                } else {
+                    // All abilities have been processed, redirect
+                    res.redirect("/dragons");
+                }
             }
+
+            // Start inserting abilities from the first one
+            insertAbility(0);
+        } else {
+            // No abilities to add, redirect
             res.redirect("/dragons");
-          }
-        );
-      }
-    }
-  );
+        }
+    });
 });
+
 
 // <!-- Update Dragons -->
 app.put("/put-dragon-ajax", function (req, res) {
