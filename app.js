@@ -49,7 +49,7 @@ app.get('/dragons', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
+           string_agg(Abilities.ability_name, ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
@@ -58,7 +58,7 @@ app.get('/dragons', function (req, res) {
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
     GROUP BY Dragons.dragon_id
     ORDER BY Dragons.dragon_name  ASC, 
-    Types.type_name  ASC, 
+    Types.type_name ASC, 
     Environments.environment_name ASC,
     Dragons.dragon_alignment ASC;
 `;
@@ -138,7 +138,7 @@ app.get('/dragons/:id', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
+           string_agg(Abilities.ability_name, ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
