@@ -212,7 +212,7 @@ app.post("/dragons/add", function (req, res) {
       const dragonId = result.insertId;
       if (Array.isArray(data.abilities) && data.abilities.length) {
         const insertAbilitiesQuery =
-          "INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)";
+          "INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ?";
         const abilitiesValues = data.abilities.map((abilityId) => [
           dragonId,
           parseInt(abilityId, 10),
@@ -445,10 +445,11 @@ app.post("/types/add", function (req, res) {
     type_average_height,
     type_average_weight,
     type_average_age,
-    total_number_of_people_killed,
-    total_number,
   } = req.body;
   let redirect_to = req.body.redirect_to;
+  let total_number_of_people_killed = 0;
+  let total_number = 0;
+
 
   // Query to add Type
   const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number) VALUES ($1, $2, $3, $4, $5, $6)`;
