@@ -56,7 +56,7 @@ app.get('/dragons', function (req, res) {
     LEFT JOIN Environments ON Dragons.environment_id = Environments.environment_id
     LEFT JOIN Dragons_Abilities ON Dragons.dragon_id = Dragons_Abilities.dragon_id
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
-    GROUP BY Dragons.dragon_id
+    GROUP BY Dragons.dragon_id, Types.type_name, Environments.environment_name
     ORDER BY Dragons.dragon_name  ASC, 
     Types.type_name ASC, 
     Environments.environment_name ASC,
