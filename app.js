@@ -528,7 +528,7 @@ app.post('/environments/add', function (req, res) {
     let total_number_of_dragons = 0;
     let insertQuery = `
     INSERT INTO Environments (environment_name, environment_terrain, environment_climate, total_number_of_dragons)
-    VALUES (?, ?, ?, ?);
+    VALUES ($1, $2, $3, $4);
 `;
 
     db.pool.query(insertQuery, [environment_name, environment_terrain, environment_climate, total_number_of_dragons], function (error, results) {
