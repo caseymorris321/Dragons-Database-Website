@@ -90,9 +90,8 @@ function populateUpdateForm(dragonId) {
         success: function (data) {
             // Clear previous Abilities
             let abilitiesSelect = document.getElementById('input-abilities');
-            Array.from(abilitiesSelect.options).forEach(option => {
-                option.selected = false;
-            });
+            const abilities = data.Abilities ? data.Abilities.split(', ') : [];
+            Array.from(abilitiesSelect.options).forEach(option => option.selected = false);
 
             // Types Dropdown
             let typeSelect = document.getElementById('input-type');
@@ -129,20 +128,11 @@ function populateUpdateForm(dragonId) {
             document.getElementById('input-lore').value = data.dragon_lore;
 
             // Abilities Select
-            if (data.Abilities) {
-                let abilitiesArray = data.Abilities.split(', ');
-                abilitiesArray.forEach(ability => {
-                    for (let option of abilitiesSelect.options) {
-                        if (option.text.trim() === ability.trim()) {
-                            option.selected = true;
-                            break;
-                        }
-                    }
+            abilities.forEach(ability => {
+                Array.from(abilitiesSelect.options).forEach(option => {
+                    if (option.text === ability) option.selected = true;
                 });
-                refreshFauxCheckboxesForSelect('input-abilities');
-            } else {
-                console.log('No abilities data available');
-            }
+            });
         },
         error: function (error) {
             console.log('Error fetching dragon details:', error);
