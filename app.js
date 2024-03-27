@@ -145,7 +145,7 @@ app.get('/dragons/:id', function (req, res) {
     LEFT JOIN Environments ON Dragons.environment_id = Environments.environment_id
     LEFT JOIN Dragons_Abilities ON Dragons.dragon_id = Dragons_Abilities.dragon_id
     LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
-    WHERE Dragons.dragon_id = ?
+    WHERE Dragons.dragon_id = $1
     GROUP BY Dragons.dragon_id
     `;
 
@@ -171,7 +171,7 @@ app.post('/dragons/add', function (req, res) {
     const typeId = data.type_id === "" || data.type_id === "NULL" ? null : parseInt(data.type_id);
 
     // Query to add Dragons
-    const insertDragonQuery = `INSERT INTO Dragons (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const insertDragonQuery = `INSERT INTO Dragons (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
 
     // Execute query
     db.pool.query(insertDragonQuery, [data.dragon_name, typeId, data.dragon_height, data.dragon_weight, data.dragon_age, data.dragon_personality, data.dragon_alignment, data.environment_id, data.number_of_people_killed, data.dragon_lore], function (error, result) {
@@ -181,7 +181,7 @@ app.post('/dragons/add', function (req, res) {
         }
         const dragonId = result.insertId;
         if (Array.isArray(data.abilities) && data.abilities.length) {
-            const insertAbilitiesQuery = 'INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ?';
+            const insertAbilitiesQuery = 'INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES $1';
             const abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId, 10)]);
 
             db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (error) {
@@ -210,10 +210,10 @@ app.put('/put-dragon-ajax', function (req, res) {
     // Handle update Dragon
     let updateDragonQuery = `
         UPDATE Dragons 
-        SET dragon_name = ?, type_id = ?, dragon_height = ?, dragon_weight = ?, 
-            dragon_age = ?, dragon_personality = ?, dragon_alignment = ?, 
-            environment_id = ?, number_of_people_killed = ?, dragon_lore = ? 
-        WHERE dragon_id = ?`;
+        SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, 
+            dragon_age = $5, dragon_personality = $6, dragon_alignment = $7, 
+            environment_id = $8, number_of_people_killed = $9, dragon_lore = $10 
+        WHERE dragon_id = $11`;
 
     db.pool.query(updateDragonQuery, [
         data.name, typeId, data.height, data.weight, data.age,
@@ -225,7 +225,7 @@ app.put('/put-dragon-ajax', function (req, res) {
             return res.sendStatus(500);
         }
         // Handle Dragon_Abilities update
-        let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
+        let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
 
         db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
             if (deleteError) {
@@ -235,7 +235,7 @@ app.put('/put-dragon-ajax', function (req, res) {
 
             // Insert new abilities for the dragon
             if (data.abilities && data.abilities.length > 0) {
-                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ?`;
+                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES $1`;
                 let abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId)]);
 
                 db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (insertError) {
@@ -256,8 +256,8 @@ app.put('/put-dragon-ajax', function (req, res) {
 app.delete('/delete-dragon-ajax/', function (req, res) {
     let data = req.body;
     let dragonID = parseInt(data.id);
-    let deleteDragonsAbilities = `DELETE FROM Dragons_Abilities WHERE dragon_id = ?`;
-    let deleteDragons = `DELETE FROM Dragons WHERE dragon_id = ?`;
+    let deleteDragonsAbilities = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
+    let deleteDragons = `DELETE FROM Dragons WHERE dragon_id = $1`;
 
     // Run the 1st query
     db.pool.query(deleteDragonsAbilities, [dragonID], function (error, rows, fields) {
@@ -345,7 +345,7 @@ app.get('/types/:id', function (req, res) {
     LEFT JOIN 
         Dragons d ON t.type_id = d.type_id
     WHERE 
-        t.type_id = ?
+        t.type_id = $1
     GROUP BY 
         t.type_id, t.type_name`;
 
@@ -378,7 +378,7 @@ app.post('/types/add', function (req, res) {
     let redirect_to = req.body.redirect_to;
 
     // Query to add Type
-    const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number) VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number) VALUES ($1, $2, $3, $4, $5, $6)`;
 
     // Execute query
     db.pool.query(query, [type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number], function (error, results) {
@@ -405,9 +405,9 @@ app.put('/put-type-ajax', function (req, res) {
     // Query to update Type
     let updateTypeQuery = `
         UPDATE Types 
-        SET type_name = ?, type_average_height = ?, type_average_weight = ?, 
-            type_average_age = ?, total_number_of_people_killed = ?, total_number = ?
-        WHERE type_id = ?`;
+        SET type_name = $1, type_average_height = $2, type_average_weight = $3, 
+            type_average_age = $4, total_number_of_people_killed = $5, total_number = $6
+        WHERE type_id = $7`;
 
     // Execute query to update Type
     db.pool.query(updateTypeQuery, [
@@ -427,7 +427,7 @@ app.delete('/delete-type-ajax/', function (req, res) {
     let data = req.body;
     let typeID = parseInt(data.id);
 
-    let deleteTypes = `DELETE FROM Types WHERE type_id = ?`;
+    let deleteTypes = `DELETE FROM Types WHERE type_id = $1`;
 
     // Run the query to delete the type
     db.pool.query(deleteTypes, [typeID], function (error, rows, fields) {
@@ -500,7 +500,7 @@ app.get('/environments/:id', function (req, res) {
     LEFT JOIN 
         Dragons d ON e.environment_id = d.environment_id
     WHERE 
-        e.environment_id = ?
+        e.environment_id = $1
     GROUP BY 
         e.environment_id;
 `;
@@ -549,7 +549,7 @@ app.post('/environments/add', function (req, res) {
 app.put('/put-environment-ajax', function (req, res) {
     let data = req.body;
 
-    let updateQuery = "UPDATE Environments SET environment_name = ?, environment_terrain = ?, environment_climate = ? WHERE environment_id = ?;";
+    let updateQuery = "UPDATE Environments SET environment_name = $1, environment_terrain = $2, environment_climate = $3 WHERE environment_id = $4;";
 
     db.pool.query(updateQuery, [data.name, data.terrain, data.climate, data.environment_id], function (error) {
         if (error) {
@@ -567,7 +567,7 @@ app.delete('/delete-environment-ajax/', function (req, res) {
     let environmentID = parseInt(data.id); // Must be integer
 
     // Query to delete the environment
-    let deleteEnvironments = `DELETE FROM Environments WHERE environment_id = ?`;
+    let deleteEnvironments = `DELETE FROM Environments WHERE environment_id = $1`;
 
     // Execute the query to delete the environment
     db.pool.query(deleteEnvironments, [environmentID], function (error) {
@@ -636,7 +636,7 @@ app.get('/abilities/:id', function (req, res) {
     LEFT JOIN 
         Dragons_Abilities da ON a.ability_id = da.ability_id
     WHERE 
-        a.ability_id = ?
+        a.ability_id = $1
     GROUP BY 
         a.ability_id;
     `;
@@ -664,7 +664,7 @@ app.post('/abilities/add', function (req, res) {
     let total_number_of_dragons = 0;
     let insertQuery = `
     INSERT INTO Abilities (ability_name, ability_proficiency, total_number_of_dragons)
-    VALUES (?, ?, ?);
+    VALUES ($1, $2, $3);
     `;
 
     db.pool.query(insertQuery, [ability_name, ability_proficiency, total_number_of_dragons], function (error, results) {
@@ -686,7 +686,7 @@ app.post('/abilities/add', function (req, res) {
 // <!-- Update an Ability -->
 app.put('/put-ability-ajax', function (req, res) {
     let data = req.body;
-    let updateQuery = "UPDATE Abilities SET ability_name = ?, ability_proficiency = ? WHERE ability_id = ?;";
+    let updateQuery = "UPDATE Abilities SET ability_name = $1, ability_proficiency = $2 WHERE ability_id = $3;";
 
     db.pool.query(updateQuery, [data.name, data.proficiency, data.ability_id], function (error) {
         if (error) {
@@ -704,7 +704,7 @@ app.delete('/delete-ability-ajax/', function (req, res) {
     let abilityID = parseInt(data.id);
 
     // Query to delete the ability
-    let deleteAbilities = `DELETE FROM Abilities WHERE ability_id = ?`;
+    let deleteAbilities = `DELETE FROM Abilities WHERE ability_id = $1`;
 
     // Execute the query to delete the ability
     db.pool.query(deleteAbilities, [abilityID], function (error) {
