@@ -62,13 +62,14 @@ app.get('/dragons', function (req, res) {
 `;
 
     // Execute the query
-    db.pool.query(queryDragons, function (error, dragonsResults) {
+    db.pool.query(queryDragons, function (error, result) {
         if (error) {
             console.error('Error fetching dragons:', error);
             return res.sendStatus(500);
         }
 
         // Display the results correctly
+        const dragonsResults = result.rows;
         const modifiedResults = dragonsResults.map(dragon => ({
             ID: dragon.dragon_id,
             Name: dragon.dragon_name,
@@ -302,11 +303,13 @@ app.get('/types', function (req, res) {
     `;
 
     // Execute Query
-    db.pool.query(query, function (error, typesResults) {
+    db.pool.query(query, function (error, result) {
         if (error) {
             console.error('Error fetching types:', error);
             return res.sendStatus(500);
         }
+        const typesResults = result.rows;
+
         const modifiedResults = typesResults.map(type => ({
             ID: type.type_id,
             Name: type.type_name,
@@ -599,11 +602,12 @@ app.get('/abilities', function (req, res) {
     `;
 
     // Execute the query
-    db.pool.query(query, function (error, abilitiesResults) {
+    db.pool.query(query, function (error, result) {
         if (error) {
             console.error('Error fetching abilities:', error);
             return res.sendStatus(500);
         }
+        const abilitiesResults = result.rows;
         const modifiedResults = abilitiesResults.map(ability => ({
             ID: ability.ability_id,
             Name: ability.ability_name,
