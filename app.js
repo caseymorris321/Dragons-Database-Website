@@ -57,7 +57,7 @@ app.get("/dragons", function (req, res) {
     d.dragon_personality, 
     d.dragon_alignment, 
     e.environment_name AS environment, 
-    STRING_AGG(a.ability_name, ', ') AS abilities,
+    ARRAY_AGG(a.ability_name, ', ') AS abilities,
     d.number_of_people_killed, 
     d.dragon_lore
 FROM 
@@ -126,6 +126,7 @@ ORDER BY
             console.error("Error fetching abilities:", error);
             return res.sendStatus(500);
           }
+          console.log(modifiedResults);
           res.render("dragons", {
             data: modifiedResults,
             dragons: dragonsResults,
