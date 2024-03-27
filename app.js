@@ -132,9 +132,9 @@ ORDER BY
           res.render("dragons", {
             data: modifiedResults,
             dragons: dragonsResults,
-            types: typesResults,
-            environments: environmentsResults,
-            abilities: abilitiesResults,
+            types: typesResults.rows,
+            environments: environmentsResults.rows,
+            abilities: abilitiesResults.rows,
           });
         });
       });
