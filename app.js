@@ -142,28 +142,28 @@ ORDER BY
 
 // <!-- Get a single Dragon -->
 app.get("/dragons/:id", function (req, res) {
-let dragonId = parseInt(req.params.id, 10);
+    let dragonId = parseInt(req.params.id, 10);
 
-  // Query to fetch single Dragon by ID
-  let query = `
-    SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
-           Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
-           Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           COALESCE((
-            SELECT STRING_AGG(a.ability_name, ', ')
-            FROM Dragons_Abilities da
-            JOIN Abilities a ON da.ability_id = a.ability_id
-            WHERE da.dragon_id = d.dragon_id
-        ), 'No Abilities') AS abilities,
-        d.number_of_people_killed,
-        d.dragon_lore
-    FROM Dragons d
-    LEFT JOIN Types t ON d.type_id = t.type_id
-    LEFT JOIN Environments e ON d.environment_id = e.environment_id
-    LEFT JOIN Dragons_Abilities ON d.dragon_id = Dragons_Abilities.dragon_id
-    LEFT JOIN Abilities ON Dragons_Abilities.ability_id = Abilities.ability_id
-    WHERE d.dragon_id = $1
-    GROUP BY d.dragon_id, t.type_name, e.environment_name
+    if (isNaN(dragonId)) {
+        return res.status(400).send("Invalid ID format");
+    }
+
+    let query = `
+        SELECT d.dragon_id, d.dragon_name, t.type_name AS type, 
+            d.dragon_height, d.dragon_weight, d.dragon_age, 
+            d.dragon_personality, d.dragon_alignment, e.environment_name AS environment, 
+            COALESCE((
+                SELECT STRING_AGG(a.ability_name, ', ')
+                FROM Dragons_Abilities da
+                JOIN Abilities a ON da.ability_id = a.ability_id
+                WHERE da.dragon_id = d.dragon_id
+            ), 'No Abilities') AS abilities,
+            d.number_of_people_killed, d.dragon_lore
+        FROM Dragons d
+        LEFT JOIN Types t ON d.type_id = t.type_id
+        LEFT JOIN Environments e ON d.environment_id = e.environment_id
+        WHERE d.dragon_id = $1
+        GROUP BY d.dragon_id, t.type_name, e.environment_name;
     `;
 
   // Execute the query
