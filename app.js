@@ -212,7 +212,7 @@ app.post("/dragons/add", function (req, res) {
       const dragonId = result.insertId;
       if (Array.isArray(data.abilities) && data.abilities.length) {
         const insertAbilitiesQuery =
-          "INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2), ($3, $4)";
+          "INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)";
         const abilitiesValues = data.abilities.map((abilityId) => [
           dragonId,
           parseInt(abilityId, 10),
