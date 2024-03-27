@@ -287,13 +287,16 @@ app.put('/put-dragon-ajax', function (req, res) {
                 console.error('Error deleting existing abilities:', deleteError);
                 return res.sendStatus(500);
             }
-
+        
             // Insert new abilities for the dragon
             if (data.abilities && data.abilities.length > 0) {
-                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)`;
-                let abilitiesValues = data.abilities.map(abilityId => [dragonId, parseInt(abilityId)]);
-
-                db.pool.query(insertAbilitiesQuery, [abilitiesValues], function (insertError) {
+                // Dynamically create the VALUES part of the INSERT query
+                const insertValues = data.abilities.map((_, index) => `($1, $${index + 2})`).join(', ');
+                const queryParameters = [dragonId].concat(data.abilities.map(abilityId => parseInt(abilityId, 10)));
+        
+                let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ${insertValues}`;
+        
+                db.pool.query(insertAbilitiesQuery, queryParameters, function (insertError) {
                     if (insertError) {
                         console.error('Error inserting new abilities:', insertError);
                         return res.sendStatus(500); // Internal Server Error
