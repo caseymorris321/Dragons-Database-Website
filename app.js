@@ -57,7 +57,7 @@ app.get("/dragons", function (req, res) {
     d.dragon_personality, 
     d.dragon_alignment, 
     e.environment_name AS environment, 
-    string_agg(a.ability_name::text, ', ') AS abilities,
+    array_to_string(array_agg(a.ability_name, ', ') AS abilities,
     d.number_of_people_killed, 
     d.dragon_lore
 FROM 
