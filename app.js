@@ -12,10 +12,12 @@
 const express = require('express');   // We are using the express library for the web server
 const app = express();            // We need to instantiate an express object to interact with the server in our code
 const db = require('./database/db-connector')  // Connect to DB
+const cors = require('cors');
 
 const PORT = process.env.PORT || 4000;                 // Set a port number at the top so it's easy to change in the future
 
 // <!-- Middleware -->
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
@@ -47,7 +49,7 @@ app.get('/dragons', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           GROUP_CONCAT(Abilities.ability_name SEPARATOR ', ') AS Abilities,
+           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
@@ -136,7 +138,7 @@ app.get('/dragons/:id', function (req, res) {
     SELECT Dragons.dragon_id, Dragons.dragon_name, Types.type_name AS type, 
            Dragons.dragon_height, Dragons.dragon_weight, Dragons.dragon_age, 
            Dragons.dragon_personality, Dragons.dragon_alignment, Environments.environment_name AS environment, 
-           GROUP_CONCAT(Abilities.ability_name SEPARATOR ', ') AS Abilities,
+           string_agg(Abilities.ability_name SEPARATOR ', ') AS Abilities,
            Dragons.number_of_people_killed, Dragons.dragon_lore
     FROM Dragons
     LEFT JOIN Types ON Dragons.type_id = Types.type_id
