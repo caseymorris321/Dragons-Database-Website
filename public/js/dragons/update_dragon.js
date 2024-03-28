@@ -7,7 +7,7 @@ let updateDragonForm = document.getElementById('update-dragon-form-ajax');
 
 // Modify the objects we need
 updateDragonForm.addEventListener("submit", function (e) {
-    // e.preventDefault()
+    e.preventDefault()
 
 
     // Get form fields we need to get data from
@@ -82,6 +82,7 @@ updateDragonForm.addEventListener("submit", function (e) {
             updateRow(xhttp.response, data);
             // window.location.reload();
             alert("Dragon updated successfully");
+            window.location.href = '/dragons';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")

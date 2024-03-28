@@ -9,8 +9,10 @@
 
 // <!-- Import required modules -->
 // Express
+require("dotenv").config();
 const express = require("express"); // We are using the express library for the web server
 const app = express(); // We need to instantiate an express object to interact with the server in our code
+
 const db = require("./database/db-connector"); // Connect to DB
 
 const PORT = process.env.PORT || 4000; // Set a port number at the top so it's easy to change in the future
@@ -142,28 +144,36 @@ ORDER BY
 
 // <!-- Get a single Dragon -->
 app.get("/dragons/:id", function (req, res) {
-    let dragonId = parseInt(req.params.id, 10);
+  let dragonId = parseInt(req.params.id, 10);
 
-    if (isNaN(dragonId)) {
-        return res.status(400).send("Invalid ID format");
-    }
+  if (isNaN(dragonId)) {
+    return res.status(400).send("Invalid ID format");
+  }
 
-    let query = `
-        SELECT d.dragon_id, d.dragon_name, t.type_name AS type, 
-            d.dragon_height, d.dragon_weight, d.dragon_age, 
-            d.dragon_personality, d.dragon_alignment, e.environment_name AS environment, 
-            COALESCE((
-                SELECT STRING_AGG(a.ability_name, ', ')
-                FROM Dragons_Abilities da
-                JOIN Abilities a ON da.ability_id = a.ability_id
-                WHERE da.dragon_id = d.dragon_id
-            ), 'No Abilities') AS abilities,
-            d.number_of_people_killed, d.dragon_lore
-        FROM Dragons d
-        LEFT JOIN Types t ON d.type_id = t.type_id
-        LEFT JOIN Environments e ON d.environment_id = e.environment_id
-        WHERE d.dragon_id = $1
-        GROUP BY d.dragon_id, t.type_name, e.environment_name;
+  let query = `
+    SELECT
+    d.dragon_id,
+    d.dragon_name,
+    t.type_name AS type,
+    d.dragon_height,
+    d.dragon_weight,
+    d.dragon_age,
+    d.dragon_personality,
+    d.dragon_alignment,
+    e.environment_name AS environment,
+    COALESCE((
+        SELECT STRING_AGG(a.ability_name, ', ')
+        FROM Dragons_Abilities da
+        JOIN Abilities a ON da.ability_id = a.ability_id
+        WHERE da.dragon_id = d.dragon_id
+    ), 'No Abilities') AS abilities,
+    d.number_of_people_killed,
+    d.dragon_lore
+FROM Dragons d
+LEFT JOIN Types t ON d.type_id = t.type_id
+LEFT JOIN Environments e ON d.environment_id = e.environment_id
+WHERE d.dragon_id = $1
+GROUP BY d.dragon_id, t.type_name, e.environment_name;
     `;
 
   // Execute the query
@@ -183,141 +193,150 @@ app.get("/dragons/:id", function (req, res) {
 
 // Add a Dragon
 app.post("/dragons/add", function (req, res) {
-    const data = req.body;
+  const data = req.body;
 
-    const typeId = data.type_id === "" || data.type_id === "NULL" ? null : parseInt(data.type_id);
+  const typeId =
+    data.type_id === "" || data.type_id === "NULL"
+      ? null
+      : parseInt(data.type_id);
 
-    // Query to add Dragons
-    const insertDragonQuery = `
+  // Query to add Dragons
+  const insertDragonQuery = `
         INSERT INTO Dragons 
         (dragon_name, type_id, dragon_height, dragon_weight, dragon_age, 
          dragon_personality, dragon_alignment, environment_id, number_of_people_killed, dragon_lore) 
         VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING dragon_id`;
 
-    // Execute query to insert dragon
-    db.pool.query(insertDragonQuery, [
-        data.dragon_name,
-        typeId,
-        data.dragon_height,
-        data.dragon_weight,
-        data.dragon_age,
-        data.dragon_personality,
-        data.dragon_alignment,
-        data.environment_id,
-        data.number_of_people_killed,
-        data.dragon_lore,
-    ], function (error, result) {
-        if (error) {
-            console.error(error);
-            return res.redirect("/dragons/add");
-        }
+  // Execute query to insert dragon
+  db.pool.query(
+    insertDragonQuery,
+    [
+      data.dragon_name,
+      typeId,
+      data.dragon_height,
+      data.dragon_weight,
+      data.dragon_age,
+      data.dragon_personality,
+      data.dragon_alignment,
+      data.environment_id,
+      data.number_of_people_killed,
+      data.dragon_lore,
+    ],
+    function (error, result) {
+      if (error) {
+        console.error(error);
+        return res.redirect("/dragons/add");
+      }
 
-        const dragonId = result.rows[0].dragon_id;
+      const dragonId = result.rows[0].dragon_id;
 
-        // Check if there are abilities to add
-        if (Array.isArray(data.abilities) && data.abilities.length > 0) {
-            // Function to insert an ability
-            function insertAbility(index) {
-                if (index < data.abilities.length) {
-                    const abilityId = parseInt(data.abilities[index], 10);
-                    const insertAbilityQuery = `
+      // Check if there are abilities to add
+      if (Array.isArray(data.abilities) && data.abilities.length > 0) {
+        // Function to insert an ability
+        function insertAbility(index) {
+          if (index < data.abilities.length) {
+            const abilityId = parseInt(data.abilities[index], 10);
+            const insertAbilityQuery = `
                         INSERT INTO Dragons_Abilities (dragon_id, ability_id) 
                         VALUES ($1, $2)`;
 
-                    db.pool.query(insertAbilityQuery, [dragonId, abilityId], function (error) {
-                        if (error) {
-                            console.error(error);
-                            // Stop processing further and redirect back
-                            return res.redirect("/dragons/add");
-                        }
-
-                        // Process the next ability
-                        insertAbility(index + 1);
-                    });
-                } else {
-                    // All abilities have been processed, redirect
-                    res.redirect("/dragons");
+            db.pool.query(
+              insertAbilityQuery,
+              [dragonId, abilityId],
+              function (error) {
+                if (error) {
+                  console.error(error);
+                  // Stop processing further and redirect back
+                  return res.redirect("/dragons/add");
                 }
-            }
 
-            // Start inserting abilities from the first one
-            insertAbility(0);
-        } else {
-            // No abilities to add, redirect
+                // Process the next ability
+                insertAbility(index + 1);
+              }
+            );
+          } else {
+            // All abilities have been processed, redirect
             res.redirect("/dragons");
+          }
         }
-    });
+
+        // Start inserting abilities from the first one
+        insertAbility(0);
+      } else {
+        // No abilities to add, redirect
+        res.redirect("/dragons");
+      }
+    }
+  );
 });
 
 // <!-- Update Dragons -->
-app.put('/put-dragon-ajax', function (req, res) {
-    let data = req.body;
-    let dragonId = parseInt(data.dragon_id); // Must be integer
-  
-    // Handle NULL Types
-    const typeId = data.type === "" ? null : data.type;
-    // Make sure parsing did not result in NaN. If it did, set typeId to null (indicative of a parsing error or invalid input).
-    if (isNaN(typeId)) {
-      typeId = null;
-    }
-  
-    // Handle update Dragon
-    let updateDragonQuery = `
-      UPDATE Dragons
-      SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, dragon_age = $5, dragon_personality = $6, dragon_alignment = $7, environment_id = $8, number_of_people_killed = $9, dragon_lore = $10
-      WHERE dragon_id = $11
-    `;
-  
-    db.pool.query(updateDragonQuery, [
-      data.name,
-      typeId,
-      data.height,
-      data.weight,
-      data.age,
-      data.personality,
-      data.alignment,
-      data.environment,
-      data.number_of_people_killed,
-      data.lore,
-      dragonId
-    ], function (error) {
-      if (error) {
-        console.error('Error updating dragon:', error);
-        return res.status(500).send({ error: 'Error updating dragon' });
-      }
-  
-      // Handle Dragon_Abilities update
-      let deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
-      db.pool.query(deleteExistingAbilitiesQuery, [dragonId], function (deleteError) {
-        if (deleteError) {
-          console.error('Error deleting existing abilities:', deleteError);
-          return res.status(500).send({ error: 'Error deleting existing abilities' });
-        }
-  
-        // Insert new abilities for the dragon
-        if (data.abilities && data.abilities.length > 0) {
-          // Dynamically create the VALUES part of the INSERT query
-          const insertValues = data.abilities.map((_, index) => `($1, $${index + 2})`).join(', ');
-          const queryParameters = [dragonId].concat(data.abilities.map(abilityId => parseInt(abilityId, 10)));
-  
-          let insertAbilitiesQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ${insertValues}`;
-          db.pool.query(insertAbilitiesQuery, queryParameters, function (insertError) {
-            if (insertError) {
-              console.error('Error inserting new abilities:', insertError);
-              return res.status(500).send({ error: 'Error inserting new abilities' });
-            }
-  
-            res.send({ message: 'Dragon and abilities updated successfully.' });
-          });
-        } else {
-          res.send({ message: 'Dragon updated successfully, no abilities to update.' });
-        }
-      });
-    });
-  });
-  
+app.put("/put-dragon-ajax", async function (req, res) {
+  const {
+    dragon_id,
+    name,
+    type,
+    height,
+    weight,
+    age,
+    personality,
+    alignment,
+    environment,
+    number_of_people_killed,
+    lore,
+    abilities,
+  } = req.body;
 
+  // Begin transaction
+  try {
+    await db.pool.query("BEGIN");
+
+    const typeId = type === "" ? null : type;
+
+    // Update the dragon's own attributes
+    const updateDragonQuery = `
+            UPDATE Dragons
+            SET dragon_name = $1, type_id = $2, dragon_height = $3, dragon_weight = $4, dragon_age = $5, 
+                dragon_personality = $6, dragon_alignment = $7, environment_id = $8, 
+                number_of_people_killed = $9, dragon_lore = $10
+            WHERE dragon_id = $11
+        `;
+
+    await db.pool.query(updateDragonQuery, [
+      name,
+      typeId,
+      height,
+      weight,
+      age,
+      personality,
+      alignment,
+      environment,
+      number_of_people_killed,
+      lore,
+      dragon_id,
+    ]);
+
+    // Delete existing abilities for this dragon
+    const deleteExistingAbilitiesQuery = `DELETE FROM Dragons_Abilities WHERE dragon_id = $1`;
+    await db.pool.query(deleteExistingAbilitiesQuery, [dragon_id]);
+
+    // Insert new abilities for the dragon, if any
+    if (abilities && abilities.length > 0) {
+      for (let abilityId of abilities) {
+        const insertAbilityQuery = `INSERT INTO Dragons_Abilities (dragon_id, ability_id) VALUES ($1, $2)`;
+        await db.pool.query(insertAbilityQuery, [dragon_id, abilityId]);
+      }
+    }
+
+    await db.pool.query("COMMIT");
+    res.send({ message: "Dragon and abilities updated successfully." });
+  } catch (error) {
+    await db.pool.query("ROLLBACK");
+    console.error("Error updating dragon and its abilities:", error);
+    res.status(500).send({ error: "Error updating dragon and its abilities" });
+  }
+});
 
 // <!-- Delete Dragons -->
 app.delete("/delete-dragon-ajax/", function (req, res) {
@@ -408,12 +427,11 @@ app.get("/types/:id", function (req, res) {
     SELECT 
         t.type_id,
         t.type_name,
-        COALESCE(AVG(d.dragon_height), 0) AS type_average_height, 
-        COALESCE(AVG(d.dragon_weight), 0) AS type_average_weight, 
-        COALESCE(AVG(d.dragon_age), 0) AS type_average_age, 
+        ROUND(COALESCE(AVG(d.dragon_height), 0), 2) AS type_average_height, 
+        ROUND(COALESCE(AVG(d.dragon_weight), 0), 2) AS type_average_weight, 
+        ROUND(COALESCE(AVG(d.dragon_age), 0), 2) AS type_average_age,
         COALESCE(SUM(d.number_of_people_killed), 0) AS total_number_of_people_killed,
         COUNT(d.dragon_id) AS total_number
-
     FROM 
         Types t
     LEFT JOIN 
@@ -424,15 +442,15 @@ app.get("/types/:id", function (req, res) {
         t.type_id, t.type_name`;
 
   // Execute the query
-  db.pool.query(query, [typeId], function (error, results) {
+  db.pool.query(query, [typeId], function (error, result) {
     if (error) {
       console.error("Error fetching type details:", error);
       return res.sendStatus(500);
     }
 
     // Query will return one row since type_id is unique
-    if (results.length > 0) {
-      res.json(results[0]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
     } else {
       res.status(404).send("Type name already exists.");
     }
@@ -450,7 +468,6 @@ app.post("/types/add", function (req, res) {
   let redirect_to = req.body.redirect_to;
   let total_number_of_people_killed = 0;
   let total_number = 0;
-
 
   // Query to add Type
   const query = `INSERT INTO Types (type_name, type_average_height, type_average_weight, type_average_age, total_number_of_people_killed, total_number) VALUES ($1, $2, $3, $4, $5, $6)`;
@@ -599,15 +616,15 @@ app.get("/environments/:id", function (req, res) {
 `;
 
   // Execute the query
-  db.pool.query(query, [environmentId], function (error, results) {
+  db.pool.query(query, [environmentId], function (error, result) {
     if (error) {
       console.error("Error fetching environment details:", error);
       return res.sendStatus(500);
     }
 
     // Query will return one row since environment_id is unique
-    if (results.length > 0) {
-      res.json(results[0]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
     } else {
       res.status(404).send("Environment name already exists.");
     }
@@ -749,15 +766,15 @@ app.get("/abilities/:id", function (req, res) {
     `;
 
   // Execute the query
-  db.pool.query(query, [abilityId], function (error, results) {
+  db.pool.query(query, [abilityId], function (error, result) {
     if (error) {
       console.error("Error fetching ability details:", error);
       return res.sendStatus(500);
     }
 
     // Query will return one row since ability_id is unique
-    if (results.length > 0) {
-      res.json(results[0]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
     } else {
       res.status(404).send("Ability name already exists.");
     }

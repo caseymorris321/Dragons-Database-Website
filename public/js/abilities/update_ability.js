@@ -9,7 +9,7 @@ let updateAbilityForm = document.getElementById('update-ability-form-ajax');
 updateAbilityForm.addEventListener("submit", function (e) {
    
     // Prevent the form from submitting
-    // e.preventDefault()
+    e.preventDefault()
 
     // Get form fields we need to get data from
     let abilityId = document.getElementById("update-ability-id").value;
@@ -43,6 +43,7 @@ updateAbilityForm.addEventListener("submit", function (e) {
             updateRow(xhttp.response, data)
             // window.location.reload();
             alert("Ability updated successfully");
+            window.location.href = '/abilities';
 
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {

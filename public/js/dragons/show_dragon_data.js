@@ -89,10 +89,15 @@ function populateUpdateForm(dragonId) {
     type: 'GET',
     success: function(data) {
         // Clear previous Abilities
-        let abilitiesSelect = document.getElementById('input-abilities');
-        Array.from(abilitiesSelect.options).forEach(option => {
-            option.selected = false;
-        });
+        let abilitiesArray = data.abilities.split(', '); // Split the string into an array
+
+            // Grab the select element for abilities
+            let abilitiesSelect = document.getElementById('input-abilities');
+
+            // Reset selections
+            Array.from(abilitiesSelect.options).forEach(option => {
+                option.selected = false; // Reset selection
+            });
 
         // Types Dropdown
         let typeSelect = document.getElementById('input-type');
@@ -129,15 +134,14 @@ function populateUpdateForm(dragonId) {
         document.getElementById('input-lore').value = data.dragon_lore;
 
          // Abilities Select
-        let abilitiesArray = data.Abilities.split(', '); 
-        abilitiesArray.forEach(ability => {
-            for (let option of abilitiesSelect.options) {
-                if (option.text.trim() === ability.trim()) {
+         abilitiesArray.forEach(abilityName => {
+            Array.from(abilitiesSelect.options).forEach(option => {
+                if (option.textContent.trim() === abilityName.trim()) {
                     option.selected = true;
-                    break;
                 }
-            }
-        });  
+            });
+        });
+
         refreshFauxCheckboxesForSelect('input-abilities'); 
     },
     error: function(error) {

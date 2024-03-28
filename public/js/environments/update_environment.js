@@ -9,7 +9,7 @@ let updateEnvironmentForm = document.getElementById('update-environment-form-aja
 updateEnvironmentForm.addEventListener("submit", function (e) {
    
     // Prevent the form from submitting
-    // e.preventDefault()
+    e.preventDefault()
 
     // Get form fields we need to get data from
     let environmentId = document.getElementById("update-environment-id").value;
@@ -45,7 +45,7 @@ updateEnvironmentForm.addEventListener("submit", function (e) {
             updateRow(xhttp.response, data)
             // window.location.reload();
             alert("Environment updated successfully");
-
+            window.location.href = '/environments';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.")

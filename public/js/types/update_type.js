@@ -5,6 +5,7 @@
 let updateTypeForm = document.getElementById('update-type-form-ajax');
 
 updateTypeForm.addEventListener("submit", function (e) {
+    e.preventDefault()
 
 
     // Get form fields we need to get data from
@@ -38,6 +39,7 @@ updateTypeForm.addEventListener("submit", function (e) {
             updateRow(xhttp.response, data)
             // window.location.reload();
             alert("Type updated successfully");
+            window.location.href = '/types';
         }
         else if (xhttp.readyState == 4 && xhttp.status != 200) {
             console.log("There was an error with the input.");
