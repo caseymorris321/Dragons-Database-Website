@@ -58,13 +58,13 @@ app.get("/dragons", function (req, res) {
   d.dragon_alignment,
   e.environment_name AS environment,
   COALESCE((
-      SELECT STRING_AGG(a.ability_name, ', ')
-      FROM Dragons_Abilities da
-      JOIN Abilities a ON da.ability_id = a.ability_id
-      WHERE da.dragon_id = d.dragon_id
-  ), 'No Abilities') AS abilities,
-  d.number_of_people_killed,
-  d.dragon_lore
+    SELECT STRING_AGG(RTRIM(a.ability_name), ', ')
+    FROM Dragons_Abilities da
+    JOIN Abilities a ON da.ability_id = a.ability_id
+    WHERE da.dragon_id = d.dragon_id
+), 'No Abilities') AS abilities,
+d.number_of_people_killed,
+d.dragon_lore
 FROM
   Dragons d
 LEFT JOIN Types t ON d.type_id = t.type_id
