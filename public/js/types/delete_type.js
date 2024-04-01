@@ -1,7 +1,3 @@
-// <!-- Citation for the following code:
-// Date: 03/04/2024
-// Adapted from nodejs-starterapp:
-// https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 function deleteType(typeID) {
     if (confirm("Are you sure you want to delete this Type? This will set the Dragons table to NULL for this Type if there are any. Be sure to update those Dragons to their new Type.")) {
         let link = '/delete-type-ajax/';

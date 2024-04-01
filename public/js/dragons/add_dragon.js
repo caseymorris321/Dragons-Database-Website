@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // event.preventDefault();
             localStorage.setItem('dragonAdded', 'true');
+            // window.location.href='/dragons';
             
         });
     }

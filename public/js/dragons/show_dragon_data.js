@@ -1,10 +1,3 @@
-/*
-<!-- Citation for the following code:
-Date: 12/22/2024
-showform function adapted from people.html starter code:
-Source URL: https://canvas.oregonstate.edu/courses/1946034/pages/exploration-web-application-technology?module_item_id=23809327 
-populateUpdateForm is original code
-*/
 function showform(dowhat) {
     /*
     * four DIVS: browse, insert, update, delete

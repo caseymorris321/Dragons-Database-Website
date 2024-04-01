@@ -1,8 +1,3 @@
-// <!-- Citation for the following code:
-// Date: 03/04/2024
-// Adapted from nodejs-starterapp:
-// https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
-
 let updateEnvironmentForm = document.getElementById('update-environment-form-ajax');
 
 // Modify the objects we need

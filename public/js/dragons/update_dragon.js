@@ -1,8 +1,3 @@
-// <!-- Citation for the following code:
-// Date: 12/28/2024
-// Adapted from nodejs-starterapp:
-// https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
-
 let updateDragonForm = document.getElementById('update-dragon-form-ajax');
 
 // Modify the objects we need

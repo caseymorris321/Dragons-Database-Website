@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // event.preventDefault();
             localStorage.setItem('abilityAdded', 'true');
-            
+      
         });
     }
   });

@@ -1,7 +1,3 @@
-// <!-- Citation for the following code:
-// Date: 03/04/2024
-// Adapted from nodejs-starterapp:
-// https://github.com/osu-cs340-ecampus/nodejs-starter-app/tree/main -->
 let updateTypeForm = document.getElementById('update-type-form-ajax');
 
 updateTypeForm.addEventListener("submit", function (e) {
