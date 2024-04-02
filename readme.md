@@ -14,7 +14,7 @@
     * Dynamic Dropdowns in Dragons table for Types and Environments.
 
 
-## Features
+## Sources
 - **add-button.svg:** https://www.iconpacks.net/free-icon/add-button-12007.html
 - **delete-button.svg:** https://www.iconpacks.net/free-icon/trash-can-10416.html
 - **edit-button.svg:** https://www.iconpacks.net/free-icon/pencil-327.html
